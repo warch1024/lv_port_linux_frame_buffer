@@ -1,20 +1,6 @@
 {
     "configurations": [
         {
-            "name": "Win32",
-            "includePath": [
-                "${workspaceFolder}/**"
-            ],
-            "defines": [
-                "_DEBUG",
-                "UNICODE",
-                "_UNICODE"
-            ],
-            "cStandard": "c17",
-            "cppStandard": "gnu++17",
-            "intelliSenseMode": "linux-gcc-x64"
-        },
-        {
             "name": "arm-linux",
             "includePath": [
                 "${workspaceFolder}/**"
@@ -26,7 +12,8 @@
             ],
             "cStandard": "c11",
             "cppStandard": "gnu++17",
-            "intelliSenseMode": "linux-gcc-arm"
+            "intelliSenseMode": "linux-gcc-arm",
+            "compilerPath": "/usr/local/arm/5.4.0/usr/bin/arm-linux-gcc"
         }
     ],
     "version": 4

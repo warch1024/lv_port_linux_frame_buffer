@@ -9,8 +9,8 @@
 
 #define DISP_BUF_SIZE (800 * 480)
 
-
-int main(void)
+extern void demo_freetype_disp(char * cn_s);
+int main(int argc, char ** argv)
 {
     /*LittlevGL init*/
     lv_init();
@@ -57,9 +57,12 @@ int main(void)
     //mydemo();   //自定义
     //demo_pic();  //显示图片
     //demo_pic_2();   //显示图片方式2
-    demo_label();   //显示标签
-    demo_switch();  //测试开关
-    
+    //demo_label();   //显示标签
+    //demo_switch();  //测试开关
+    //demo_window();  //测试小窗
+    //demo_checkbox();    //测试复选框
+    //demo_pic_on_btn(argv[1]);   //按钮显示图片
+    demo_freetype_disp("显示中文测试\n");
 
     /*Handle LitlevGL tasks (tickless mode)*/
     while(1) {
