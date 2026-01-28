@@ -10,14 +10,6 @@
 #define DISP_BUF_SIZE (800 * 480)
 
 
-//按钮1的事件响应函数
-void bt1_cb(lv_event_t * e)
-{
-    //打印主函数传递过来的信息
-    printf("主函数传递的信息是: %d\n",*((int *)(e->user_data)));
-    printf("恭喜登录成功!\n");
-}
-
 int main(void)
 {
     /*LittlevGL init*/
@@ -62,29 +54,12 @@ int main(void)
     /*Create a Demo*/
     lv_demo_widgets();
 
-    {
-        //创建按钮
-    lv_obj_t *bt1=lv_btn_create(lv_scr_act());
-
-    //设置按钮的坐标位置和大小-->设置某个属性
-    lv_obj_set_size(bt1,100,50); 
-    lv_obj_set_pos(bt1,400,240);
-
-    //给按钮设置文字-->LVGL没有提供专门的方法
-    //思路:创建一个标签(专门显示文字的),把标签嵌套到按钮上就可以显示文字
-    //创建标签
-    lv_obj_t *lb1=lv_label_create(bt1);  //按钮作为标签的父窗口,等一会标签就会嵌套到按钮上
-    //给标签设置文字内容
-    lv_label_set_text(lb1,"login");
-     //给按钮设置事件响应函数
-    //lv_obj_add_event_cb(bt1,bt1_cb,LV_EVENT_CLICKED,NULL);
-    //单独讲解第四个参数的使用
-    int n1=698;
-    lv_obj_add_event_cb(bt1,bt1_cb,LV_EVENT_CLICKED,&n1);
-    }
-
-
-
+    //mydemo();   //自定义
+    //demo_pic();  //显示图片
+    //demo_pic_2();   //显示图片方式2
+    demo_label();   //显示标签
+    demo_switch();  //测试开关
+    
 
     /*Handle LitlevGL tasks (tickless mode)*/
     while(1) {
