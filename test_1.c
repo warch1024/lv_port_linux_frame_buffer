@@ -9,7 +9,6 @@
 #include <pthread.h>
 #include <time.h>
 #include <sys/time.h>
-
 void bt1_cb(lv_event_t * e)
 {
     // 打印主函数传递过来的信息
@@ -272,6 +271,7 @@ void demo_btn_switch_led(){     //使用触屏按钮开关led灯
 void create_font_style(lv_style_t *style, char* font_path, int font_size){
     /*Create a font*/ //创建字体对象
     static lv_ft_info_t info;   //info会在后续使用
+    bzero(&info ,sizeof(info));
     // lv_ft_info_t * info = (lv_ft_info_t*)malloc(sizeof(lv_ft_info_t));  //info会在后续使用
     /*FreeType uses C standard file system, so no driver letter is required.*/
     info.name = font_path;
@@ -298,4 +298,131 @@ void demo_timer(){
 }
 
 
+lv_obj_t * list_bt1, *list_bt2, *list_bt3, *list_bt4;
+lv_obj_t * list1 ;
 
+void demo_lists(){
+    lv_obj_t * list1 = lv_list_create(lv_scr_act());
+    list1 = lv_list_create(lv_scr_act());
+    lv_obj_set_size(list1,400,480);    //设置位置
+    lv_obj_set_pos(list1,399,0);    //设置大小
+    static lv_style_t yahei_style;    //这个样式会被别处函数调用使用
+    create_font_style(&yahei_style, "/fonts/MSYH.TTC", 48);   //设置样式
+
+    
+    lv_obj_add_style(list1, &yahei_style, 0);   //给组件添加样式
+    // 给标签设置文字内容
+    lv_list_add_text(list1, "列表11111111111111111111111111111111111111111");   //给标签添加文字1
+    lv_list_add_text(list1, "列表2");   //给标签添加文字
+    lv_list_add_text(list1, "列表3");   //给标签添加文字
+    lv_list_add_text(list1, "列表4");   //给标签添加文字
+        //列表框添加按钮
+    
+    list_bt1=lv_list_add_btn(list1,NULL, "无线网络");
+    list_bt2=lv_list_add_btn(list1,NULL, "软键盘");
+    list_bt3=lv_list_add_btn(list1,NULL, "打开文件");
+
+    //给三个按钮添加事件响应函数
+    lv_obj_add_event_cb(list_bt1,btn_cb_list,LV_EVENT_CLICKED,NULL);
+    lv_obj_add_event_cb(list_bt2,btn_cb_list,LV_EVENT_CLICKED,NULL);
+    lv_obj_add_event_cb(list_bt3,btn_cb_list,LV_EVENT_CLICKED,NULL);
+}
+void btn_cb_list(lv_event_t *e){
+      //判断究竟点击的是哪个按钮
+    if(e->target==list_bt1)
+    {
+        //获取你点击的按钮上的文字内容
+        printf("你点击的按钮文字内容是: %s\n",lv_list_get_btn_text(list1,list_bt1));
+        printf("点击了列表框中的无线网络按钮!\n");
+    }
+   else if(e->target==list_bt2)
+        printf("点击了列表框中的软键盘按钮!\n");
+    else if(e->target==list_bt3)
+        printf("点击了列表框中的打开文件按钮!\n");
+}
+
+
+
+lv_obj_t* btnmatrix1;
+    //往矩阵按钮中添加你想要的按钮
+lv_obj_t * matrix_bt1, *matrix_bt2, *matrix_bt3;
+//矩阵按钮的事件响应函数
+void demo_matrix_btn(){
+        //创建矩阵按钮
+    btnmatrix1=lv_btnmatrix_create(lv_scr_act());
+
+    //设置位置,大小
+    lv_obj_set_size(btnmatrix1,400,480);
+    lv_obj_set_pos(btnmatrix1,100,0);
+    const char* btnmatrix_map[] = {"1", "2","3","\n",
+                                "4", "5","6","\n",
+                                "7", "8","9","\n",
+                                "#", "0","En",NULL}; 
+
+    lv_btnmatrix_set_map(btnmatrix1,btnmatrix_map);
+    lv_obj_add_event_cb(btnmatrix1,btnmatrix1_cb,LV_EVENT_CLICKED,NULL);
+}
+
+void btnmatrix1_cb(lv_event_t *e)
+{
+    uint16_t id; //存放按钮的ID
+
+    //方法1: 获取你点击的按钮的字面值(按钮上的文字)
+    //lv_obj_t *obj=lv_event_get_target(e); //获取你点击的那个按钮地址
+    //id=lv_btnmatrix_get_selected_btn(obj);
+    //char  *text=lv_btnmatrix_get_btn_text(btnmatrix1,id); 
+
+    //if(strcmp(text,"1")==0)
+        //printf("你点击是1\n");
+    //else if(strcmp(text,"2")==0)
+        //printf("你点击是2\n");  
+        
+    //验证:  e->target保存的究竟是整个矩阵按钮的地址,还是矩阵按钮中某个点击的按钮的地址
+    //三个地址都是一样的,无论你点击哪个按钮,全部地址都是一样
+    //但是获取到的ID是不一样,ID从0开始
+    printf("整个矩阵按钮对象的地址: %p\n",btnmatrix1);
+    printf("e->target存放的地址: %p\n",e->target);
+    printf("你点击的那个按钮的地址: %p\n",lv_event_get_target(e));
+
+    printf("你点击的那个按钮ID号是: %hu\n",lv_btnmatrix_get_selected_btn(e->target));
+}
+int n=0;
+void bt_cb(lv_event_t *e)
+{
+    //判断点击的是哪个按钮
+    if(e->target==matrix_bt1)
+    {
+        n++;
+        if(n%2==1) //奇数次
+            //隐藏矩阵键盘上所有的按钮
+            lv_btnmatrix_set_btn_ctrl_all(btnmatrix1, LV_BTNMATRIX_CTRL_HIDDEN);
+        else
+            lv_btnmatrix_clear_btn_ctrl_all(btnmatrix1, LV_BTNMATRIX_CTRL_HIDDEN);
+    }
+    else if(e->target==matrix_bt2)
+    {
+        //printf("按钮222222\n");
+        //禁用矩阵键盘上所有的按钮
+        lv_btnmatrix_set_btn_ctrl_all(btnmatrix1, LV_BTNMATRIX_CTRL_DISABLED);
+    }
+    else if(e->target==matrix_bt3)
+    {
+        //恢复使用矩阵键盘上所有的按钮
+        lv_btnmatrix_set_btn_ctrl_all(btnmatrix1, LV_BTNMATRIX_CTRL_CHECKABLE);
+    }
+}
+
+void matrix_btn_cb(lv_event_t * e){
+    uint16_t id;    //存放按钮id
+    //获取点击按钮字面值
+    lv_obj_t * obj = lv_event_get_target(e);
+    
+}
+void demo_text_area(){
+    lv_obj_t * ta = lv_textarea_create(lv_scr_act());
+    lv_obj_t * kb = lv_keyboard_create(lv_scr_act());
+    lv_obj_set_size(ta,500,200);
+    lv_obj_set_pos(ta,100,0);
+    lv_obj_set_size(kb,400,480);
+    lv_obj_set_pos(kb,100,0);
+}

@@ -20,4 +20,11 @@ void demo_btn_switch_led();
 void create_font_style(lv_style_t *style, char* font_path, int font_size);
 void timer_event_cb(lv_timer_t * e);
 void demo_timer();
+void demo_lists();
+void btn_cb_list(lv_event_t *e);
+void demo_matrix_btn();
+void btnmatrix1_cb(lv_event_t *e);
+void bt_cb(lv_event_t *e);
+void demo_text_area();
+void matrix_btn_cb(lv_event_t * e);
 #endif

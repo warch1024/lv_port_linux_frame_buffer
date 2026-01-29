@@ -52,7 +52,7 @@ int main(int argc, char ** argv)
 
 
     /*Create a Demo*/
-    lv_demo_widgets();
+    //lv_demo_widgets();
 
     //mydemo();   //自定义
     //demo_pic();  //显示图片
@@ -63,8 +63,10 @@ int main(int argc, char ** argv)
     //demo_checkbox();    //测试复选框
     //demo_pic_on_btn(argv[1]);   //按钮显示图片
     //demo_freetype_disp("显示中文测试\n");
-    demo_btn_switch_led();
-    
+    //demo_btn_switch_led();
+    //demo_timer();
+    //demo_lists();   //列表框
+    demo_matrix_btn();
     /*Handle LitlevGL tasks (tickless mode)*/
     while(1) {
         lv_timer_handler();
