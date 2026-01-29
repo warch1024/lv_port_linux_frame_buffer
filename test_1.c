@@ -2,6 +2,9 @@
 #include "lvgl/demos/lv_demos.h"
 #include "lv_drivers/display/fbdev.h"
 #include "lv_drivers/indev/evdev.h"
+
+#include"led.h"
+#include "test-1.h"
 #include <unistd.h>
 #include <pthread.h>
 #include <time.h>
@@ -199,14 +202,100 @@ void demo_freetype_disp(char * cn_s)
     }
 
     /*Create style with the new font*/
-    static lv_style_t style;
-    lv_style_init(&style);
+    static lv_style_t style;    //定义样式对象
+    lv_style_init(&style);  //初始化样式
     lv_style_set_text_font(&style, info.font);
-    lv_style_set_text_align(&style, LV_TEXT_ALIGN_CENTER);
+    lv_style_set_text_align(&style, LV_TEXT_ALIGN_CENTER);  //居中对齐（左，右，居中）
 
     /*Create a label with the new style*/
-    lv_obj_t * label = lv_label_create(lv_scr_act());
-    lv_obj_add_style(label, &style, 0);
+    lv_obj_t * label = lv_label_create(lv_scr_act());   //创建组件，使用样式
+    lv_obj_add_style(label, &style, 0); //给组件添加样式
     lv_label_set_text(label, cn_s);
     lv_obj_center(label);
 }
+
+
+
+int led_click_lighting(char* led_file, int s_flag){
+    int led_fd = open(led_file, O_RDWR);    // /dev/Led
+    if(led_fd != -1){
+        if(s_flag == 0){
+            ioctl(led_fd, LED1, LED_OFF);
+            ioctl(led_fd, LED2, LED_OFF);
+            ioctl(led_fd, LED3, LED_OFF);
+            ioctl(led_fd, LED4, LED_OFF);
+        }
+        else{
+            for(int i=0; i<4; i++){
+                ioctl(led_fd, _IO(TEST_MAGIC, i), LED_ON);
+                
+            }
+        }
+        close(led_fd);
+        return 1;
+    }
+    return 0;
+}
+
+btn_switch_cb(lv_event_t * e){  //led灯回调函数
+    led_click_lighting("/dev/Led", *(int*)(e->user_data));
+    printf("切换状态%d\n",*(int*)(e->user_data));
+    *(int*)(e->user_data) = ~(*(int*)(e->user_data));
+}
+void demo_btn_switch_led(){     //使用触屏按钮开关led灯
+
+    
+       //// 创建按钮
+    lv_obj_t * bt1 = lv_btn_create(lv_scr_act());
+
+    // 设置按钮的坐标位置和大小-->设置某个属性
+    lv_obj_set_size(bt1, 300, 100);
+    lv_obj_set_pos(bt1, 400, 240);
+
+    // 给按钮设置文字-->LVGL没有提供专门的方法
+    // 思路:创建一个标签(专门显示文字的),把标签嵌套到按钮上就可以显示文字
+    //// 创建标签
+    static lv_style_t yahei_style;    //这个样式会被别处函数调用使用
+    create_font_style(&yahei_style, "/fonts/MSYH.TTC", 48);   //设置样式
+
+    lv_obj_t * lb1 = lv_label_create(bt1); // 按钮作为标签的父窗口,等一会标签就会嵌套到按钮上
+    lv_obj_add_style(lb1, &yahei_style, 0);   //给组件添加样式
+    // 给标签设置文字内容
+    lv_label_set_text(lb1, "灯开关");   //给标签添加文字
+    // 给按钮设置事件响应函数
+    // lv_obj_add_event_cb(bt1,bt1_cb,LV_EVENT_CLICKED,NULL);
+    // 单独讲解第四个参数的使用
+    static int n1 = 0;  //demo_btn_switch_led函数返回n1失效,回调btn_switch_cb会被统一管理
+    lv_obj_add_event_cb(bt1, btn_switch_cb, LV_EVENT_CLICKED, &n1);
+}
+
+void create_font_style(lv_style_t *style, char* font_path, int font_size){
+    /*Create a font*/ //创建字体对象
+    static lv_ft_info_t info;   //info会在后续使用
+    // lv_ft_info_t * info = (lv_ft_info_t*)malloc(sizeof(lv_ft_info_t));  //info会在后续使用
+    /*FreeType uses C standard file system, so no driver letter is required.*/
+    info.name = font_path;
+    info.weight = font_size;
+    info.style = FT_FONT_STYLE_NORMAL;
+    info.mem = NULL;
+    if(!lv_ft_font_init(&info)) {
+        LV_LOG_ERROR("create failed.");
+    }
+
+    /*Create style with the new font*/// 创建样式对象
+    //static lv_style_t style;    //定义样式对象
+    lv_style_init(style);  //初始化样式
+    lv_style_set_text_font(style, info.font);
+    lv_style_set_text_align(style, LV_TEXT_ALIGN_CENTER);  //居中对齐（左，右，居中）
+}
+
+void timer_event_cb(lv_timer_t * e){
+    printf("你好\n");
+}
+void demo_timer(){
+    lv_timer_create(timer_event_cb, 1000, NULL);      //创建定时器
+    lv_timer_enable(true);  //开启所有定时器
+}
+
+
+
