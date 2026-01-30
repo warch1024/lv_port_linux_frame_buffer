@@ -431,14 +431,14 @@ void bt_cb(lv_event_t *e)
     }
 }
 // #############################输入法候选字字体与字号
-lv_style_t pinyin_text_style;   //
+lv_style_t pinyin_plugin_font_style;   //
 void add_pinyin_plugin(lv_obj_t * kb){  //给kb添加中文支持
     
-    create_font_style(&pinyin_text_style,"/fonts/MSYH.TTC", 20);
+    create_font_style(&pinyin_plugin_font_style,"/fonts/MSYH.TTC", 20);
     lv_obj_t * pinyin_ime = lv_ime_pinyin_create(lv_scr_act()); //创建拼音输入法插件
     lv_obj_set_size(pinyin_ime, 1, 1);  //设置大小避免遮蔽
     lv_obj_set_pos(pinyin_ime, 0, 0);   //设置位置避免遮蔽
-    lv_obj_add_style(pinyin_ime, &pinyin_text_style, 0); //输入法候选字正常显示中文
+    lv_obj_add_style(pinyin_ime, &pinyin_plugin_font_style, 0); //输入法候选字正常显示中文
     lv_ime_pinyin_set_mode(pinyin_ime, LV_IME_PINYIN_MODE_K26); //设置默认模式
     lv_obj_t * cand_panel = lv_ime_pinyin_get_cand_panel(pinyin_ime);   //获取拼音候选栏对象
     lv_obj_set_width(cand_panel, 600); // 设置大小

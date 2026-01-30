@@ -2,7 +2,7 @@
 #define _TEST_1_H
 
 
-extern lv_style_t pinyin_text_style;   //
+extern lv_style_t pinyin_plugin_font_style;   //
 
 void bt1_cb(lv_event_t * e);
 void mydemo();
