@@ -17,9 +17,11 @@
 
 void user_ta_cb(lv_event_cb_t *e ){
     lv_keyboard_set_textarea(kb, user_ta);
+    lv_obj_clear_flag(kb, LV_OBJ_FLAG_HIDDEN);//隐藏键盘
 }
 void psw_ta_cb(lv_event_cb_t *e ){
     lv_keyboard_set_textarea(kb, psw_ta);
+    lv_obj_clear_flag(kb, LV_OBJ_FLAG_HIDDEN);//隐藏键盘
 }
 void login_btn_cb(lv_event_cb_t *e){
         //跳转界面
@@ -31,16 +33,13 @@ void login_btn_cb(lv_event_cb_t *e){
     if(strcmp(name,"gec")==0 && strcmp(passwd,"123456")==0)
     {
         //跳到主界面
-        show_main_menu();
+        main_screen();
         //关闭释放登录界面
         lv_obj_del(window1);
     }
 }
 
 void login_screen(){
-      printf("1 ");
-    
-      printf("2 ");
     create_font_style(&def_text_style,"/fonts/MSYH.TTC", 20);
 
     window1 = lv_obj_create(lv_scr_act());   //添加小窗
@@ -49,6 +48,14 @@ void login_screen(){
     //lv_obj_align(window1,LV_ALIGN_TOP_MID,100,-100); //设置对齐
 
     //lv_obj_set_pos(window1, 200, 140);
+    //添加键盘
+    kb = lv_keyboard_create(lv_scr_act());   //创建键盘
+    lv_obj_set_size(kb,400,150);
+    lv_obj_set_pos(kb,0,0);     //位置放在0,0否则偏移很大
+    //lv_obj_align_to(cand_panel, kb,LV_ALIGN_BOTTOM_MID, 0, -200); // 对齐到键盘
+    add_pinyin_plugin(kb);
+    lv_obj_add_flag(kb, LV_OBJ_FLAG_HIDDEN);//隐藏键盘
+    //用户名输入框
     user_ta = lv_textarea_create(window1);    //添加用户名输入框
     //lv_obj_set_width(user_ta, 300);
     lv_obj_set_size(user_ta, 300, 60);
@@ -60,6 +67,7 @@ void login_screen(){
     //lv_textarea_set_password_mode(user_ta, true); //密码输入使用*代替,开启密码模式
     lv_obj_add_event_cb(user_ta, user_ta_cb,LV_EVENT_FOCUSED,NULL);   //添加输入框回调函数
 
+    //密码输入框
     psw_ta = lv_textarea_create(window1);  //添加密码窗口
     lv_obj_set_size(psw_ta, 300, 60);
     lv_obj_align_to(psw_ta,user_ta,LV_ALIGN_TOP_MID,0,50);
@@ -81,19 +89,15 @@ void login_screen(){
     lv_label_set_text(login_bt_lb, "登录");   //给标签添加文字
     lv_obj_add_event_cb(psw_ta, login_btn_cb,LV_EVENT_FOCUSED,NULL);   //添加输入框回调函数
 
-    lv_obj_t * kb = lv_keyboard_create(lv_scr_act());   //创建键盘
-    lv_obj_set_size(kb,600,220);
-    lv_obj_set_pos(kb,0,0);     //位置放在0,0否则偏移很大
-    //lv_obj_align_to(cand_panel, kb,LV_ALIGN_BOTTOM_MID, 0, -200); // 对齐到键盘
-    add_pinyin_plugin(kb);
+    
     
     //软键盘跟文本框关联-->关联之后软键盘输入的字符才可以在文本框显示
-    lv_keyboard_set_textarea(kb,user_ta);
+    //lv_keyboard_set_textarea(kb,user_ta);
 
     
 }
 
-void show_main_menu()
+void main_screen()
 {
     //创建小窗口
     window2=lv_obj_create(lv_scr_act());
