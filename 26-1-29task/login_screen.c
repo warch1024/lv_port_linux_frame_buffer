@@ -12,9 +12,12 @@
 #include <time.h>
 #include <sys/time.h>
 
- static lv_obj_t * cn_kb,* user_ta, * psw_ta, *window1, *window2;
+ static lv_obj_t * login_page, * cn_kb,* user_ta, * psw_ta, *window1, *main_screen_page;
  static lv_style_t def_text_style;
 
+void hidden_kb_cb(lv_event_cb_t * e){   //隐藏键盘回调
+    lv_obj_add_flag(cn_kb, LV_OBJ_FLAG_HIDDEN);//显示键盘
+}
 void user_ta_cb(lv_event_cb_t *e ){
     lv_obj_clear_flag(cn_kb, LV_OBJ_FLAG_HIDDEN);//显示键盘
     lv_keyboard_set_textarea(cn_kb, user_ta);
@@ -42,16 +45,21 @@ void login_btn_cb(lv_event_cb_t *e){
 }
 
 void login_screen(){
+    login_page = lv_obj_create(lv_scr_act());
+    lv_obj_set_size(login_page,800,480);
+    //添加隐键盘回调函数
+    lv_obj_add_event_cb(login_page, hidden_kb_cb, LV_EVENT_CLICKED, NULL);   
+
     create_font_style(&def_text_style,"/fonts/MSYH.TTC", 20);   //设置提示字体
     //添加小窗
-    window1 = lv_obj_create(lv_scr_act());
+    window1 = lv_obj_create(login_page);
     lv_obj_set_size(window1, 400, 200);
     //lv_obj_set_pos(window1, 200, 0);
     lv_obj_align(window1,LV_ALIGN_TOP_MID,0, 0); //设置对齐
 
     //lv_obj_set_pos(window1, 200, 140);
     //添加键盘
-    cn_kb = tools_create_pinyin_ime(lv_scr_act(), 500, 200);   //屏幕上添加键盘,默认隐藏
+    cn_kb = tools_create_pinyin_ime(login_page, 500, 200);   //屏幕上添加键盘,默认隐藏
     //用户名输入框
     user_ta = lv_textarea_create(window1);    //添加用户名输入框
     //lv_obj_set_width(user_ta, 300);
@@ -80,16 +88,14 @@ void login_screen(){
     // 设置按钮的坐标位置和大小-->设置某个属性
     lv_obj_set_size(login_bt, 80, 40);
     lv_obj_align_to(login_bt,psw_ta,LV_ALIGN_TOP_MID,0,50);
+    lv_obj_add_event_cb(login_bt, login_btn_cb, LV_EVENT_CLICKED, NULL);   //添加按钮点击回调函数
 
     //给按钮添加标签
     lv_obj_t * login_bt_lb = lv_label_create(login_bt); // 按钮作为标签的父窗口,等一会标签就会嵌套到按钮上
     lv_obj_align_to(login_bt_lb,login_bt ,LV_ALIGN_CENTER,-5,-2); //设置对齐
     lv_obj_add_style(login_bt_lb, &def_text_style, 0);   //给组件添加样式
     lv_label_set_text(login_bt_lb, "登录");   //给标签添加文字
-    lv_obj_add_event_cb(login_bt_lb, login_btn_cb,LV_EVENT_CLICKED, NULL);   //添加输入框回调函数
 
-    
-    
     //软键盘跟文本框关联-->关联之后软键盘输入的字符才可以在文本框显示
     //lv_keyboard_set_textarea(kb,user_ta);
 
@@ -99,13 +105,13 @@ void login_screen(){
 void main_screen()
 {
     //创建小窗口
-    window2=lv_obj_create(lv_scr_act());
+    main_screen_page=lv_obj_create(lv_scr_act());
 
     //设置menu2的大小
-    lv_obj_set_size(window2,800,480);
+    lv_obj_set_size(main_screen_page,800,480);
 
      //创建标签
-    lv_obj_t *lb1=lv_label_create(window2);
+    lv_obj_t *lb1=lv_label_create(main_screen_page);
     lv_obj_set_align(lb1,LV_ALIGN_TOP_MID);
     //标签设置文字
     lv_obj_add_style(lb1,&def_text_style,0);
