@@ -2,6 +2,9 @@
 #include "lvgl/demos/lv_demos.h"
 #include "lv_drivers/display/fbdev.h"
 #include "lv_drivers/indev/evdev.h"
+
+#include "test-1.h"
+#include "26-1-29task/login_screen.h"
 #include <unistd.h>
 #include <pthread.h>
 #include <time.h>
@@ -67,9 +70,14 @@ int main(int argc, char ** argv)
     //demo_timer(); //定时器
     //demo_lists();   //列表框
     //demo_matrix_btn();  //矩阵按钮
-    demo_text_area_kb();   //文本框和键盘
+    //demo_text_area_kb();   //文本框和键盘
+    
     //demo_tabview();   //选项卡
     //demo_msgbox();      //消息盒子
+    //demo_type_design();
+    printf("-1 ");
+    login_screen();
+
 
     /*Handle LitlevGL tasks (tickless mode)*/
     while(1) {

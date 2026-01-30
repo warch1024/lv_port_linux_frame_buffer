@@ -271,7 +271,7 @@ void demo_btn_switch_led(){     //使用触屏按钮开关led灯
 
 void create_font_style(lv_style_t *style, char* font_path, int font_size){
     /*Create a font*/ //创建字体对象
-    static lv_ft_info_t info;   //info会在后续使用
+    static lv_ft_info_t info;   //生命周期增长,作用域不变
     bzero(&info ,sizeof(info));
     // lv_ft_info_t * info = (lv_ft_info_t*)malloc(sizeof(lv_ft_info_t));  //info会在后续使用
     /*FreeType uses C standard file system, so no driver letter is required.*/
@@ -282,7 +282,6 @@ void create_font_style(lv_style_t *style, char* font_path, int font_size){
     if(!lv_ft_font_init(&info)) {
         LV_LOG_ERROR("create failed.");
     }
-
     /*Create style with the new font*/// 创建样式对象
     //static lv_style_t style;    //定义样式对象
     lv_style_init(style);  //初始化样式
@@ -431,7 +430,26 @@ void bt_cb(lv_event_t *e)
         lv_btnmatrix_set_btn_ctrl_all(btnmatrix1, LV_BTNMATRIX_CTRL_CHECKABLE);
     }
 }
+// #############################输入法候选字字体与字号
+lv_style_t pinyin_text_style;   //
+void add_pinyin_plugin(lv_obj_t * kb){  //给kb添加中文支持
+    
+    create_font_style(&pinyin_text_style,"/fonts/MSYH.TTC", 20);
+    lv_obj_t * pinyin_ime = lv_ime_pinyin_create(lv_scr_act()); //创建拼音输入法插件
+    lv_obj_set_size(pinyin_ime, 1, 1);  //设置大小避免遮蔽
+    lv_obj_set_pos(pinyin_ime, 0, 0);   //设置位置避免遮蔽
+    lv_obj_add_style(pinyin_ime, &pinyin_text_style, 0); //输入法候选字正常显示中文
+    lv_ime_pinyin_set_mode(pinyin_ime, LV_IME_PINYIN_MODE_K26); //设置默认模式
+    lv_obj_t * cand_panel = lv_ime_pinyin_get_cand_panel(pinyin_ime);   //获取拼音候选栏对象
+    lv_obj_set_width(cand_panel, 600); // 设置大小
+    lv_ime_pinyin_set_keyboard(pinyin_ime, kb); //将拼音插件绑定到键盘
+    /* 如果使用自定义字典
+        则在lv_config.h将LV_IME_PINYIN_USE_DEFAULT_DICT宏置0
+        使用lv_ime_pinyin_set_dict()设置自定义字典
+        使用lv_ime_pinyin_set_mode()设置输入模式
+    */
 
+}
 void demo_text_area_kb(){
     lv_obj_t * ta = lv_textarea_create(lv_scr_act());   //创建文本区
     //lv_textarea_set_one_line(ta,true);  //限定在一行,框满不会换行,会一直向右增长行
@@ -440,33 +458,18 @@ void demo_text_area_kb(){
     lv_obj_set_size(ta,500,200);
     lv_obj_set_pos(ta,150,0);
    
-
     //设置默认提示文字
     static lv_style_t def_text_style;
-    create_font_style(&def_text_style,"/fonts/MSYH.TTC", 20);
-    lv_textarea_set_placeholder_text(ta, "def");
+    create_font_style(&def_text_style,"/fonts/MSYH.TTC", 30);
+    lv_textarea_set_placeholder_text(ta, "点击输入");
     lv_obj_add_style(ta, &def_text_style,0);
 
-    lv_obj_t * pinyin_ime = lv_ime_pinyin_create(lv_scr_act()); //创建拼音输入法插件
-    lv_obj_set_size(pinyin_ime, 1, 1);
-    lv_obj_set_pos(pinyin_ime, 0, 0);
-
-    lv_obj_add_style(pinyin_ime, &def_text_style, 0); //输入法候选字显示中文
-    lv_ime_pinyin_set_mode(pinyin_ime, LV_IME_PINYIN_MODE_K26); //设置默认模式
-    lv_obj_t * cand_panel = lv_ime_pinyin_get_cand_panel(pinyin_ime);   //获取拼音候选栏对象
-    lv_obj_set_width(cand_panel, 600); // 设置大小
-    
     lv_obj_t * kb = lv_keyboard_create(lv_scr_act());   //创建键盘
      lv_obj_set_size(kb,600,220);
     lv_obj_set_pos(kb,0,0);     //位置放在0,0否则偏移很大
     //lv_obj_align_to(cand_panel, kb,LV_ALIGN_BOTTOM_MID, 0, -200); // 对齐到键盘
-
-    lv_ime_pinyin_set_keyboard(pinyin_ime, kb); //将拼音插件绑定到键盘
-    /* 如果使用自定义字典
-        则在lv_config.h将LV_IME_PINYIN_USE_DEFAULT_DICT宏置0
-        使用lv_ime_pinyin_set_dict()设置自定义字典
-        使用lv_ime_pinyin_set_mode()设置输入模式
-    */
+    add_pinyin_plugin(kb);
+    
     //软键盘跟文本框关联-->关联之后软键盘输入的字符才可以在文本框显示
     lv_keyboard_set_textarea(kb,ta);
 
@@ -489,4 +492,34 @@ void demo_msgbox(){
     static const char * mbbts[] = {"continue", "exit", ""};     //这个函数会结束需将变量延长生命周期
     lv_obj_t * tab_view = lv_msgbox_create(lv_scr_act(), "new msg","hello",mbbts, false);
 
+}
+
+void demo_type_design(){
+    lv_obj_t * bt1 = lv_btn_create(lv_scr_act());   //在屏幕上创建按钮
+
+    // 设置按钮的坐标位置和大小-->设置某个属性
+    lv_obj_set_size(bt1, 200, 200);
+    lv_obj_set_pos(bt1, 200, 140);
+    lv_obj_set_style_bg_color(bt1, lv_color_hex(0x0fff0000),LV_STATE_DEFAULT);  //设置组件的背景颜色
+    lv_obj_set_style_bg_opa(bt1, 100,LV_STATE_DEFAULT);  //设置组件的背景颜色透明度
+     //创建标签
+    lv_obj_t *label1=lv_label_create(lv_scr_act());
+    //设置标签相对于按钮的位置对齐
+    lv_obj_align_to(label1,bt1,LV_ALIGN_OUT_BOTTOM_MID,0,20);
+    
+    //设置标签字体大小
+    lv_obj_set_style_text_font(label1, &lv_font_montserrat_30, LV_STATE_DEFAULT);
+    //设置标签的前景色-->文字的颜色
+    lv_obj_set_style_text_color(label1, lv_color_hex(0x5084db), LV_STATE_DEFAULT);
+    //标签设置文字
+    lv_label_set_text(label1,"I am super man!");
+     //创建复选框
+    lv_obj_t* checkbox = lv_checkbox_create(lv_scr_act());
+    lv_checkbox_set_text(checkbox, "passwd");
+    //设置复选框按钮的上面对齐
+    lv_obj_align_to(checkbox,bt1,LV_ALIGN_OUT_TOP_MID,0,-20);
+
+    //设置复选框的状态-->禁止勾选
+    lv_obj_add_state(checkbox,LV_STATE_CHECKED | LV_STATE_DISABLED);
+    lv_obj_add_flag(bt1, LV_OBJ_FLAG_HIDDEN);//隐藏按钮
 }

@@ -1,6 +1,9 @@
 #ifndef _TEST_1_H
 #define _TEST_1_H
 
+
+extern lv_style_t pinyin_text_style;   //
+
 void bt1_cb(lv_event_t * e);
 void mydemo();
 void demo_pic();
@@ -26,6 +29,8 @@ void demo_matrix_btn();
 void btnmatrix1_cb(lv_event_t *e);
 void bt_cb(lv_event_t *e);
 void demo_text_area_kb();
+void add_pinyin_plugin(lv_obj_t * kb);
 void demo_tabview();
 void demo_msgbox();
+void demo_type_design();
 #endif
