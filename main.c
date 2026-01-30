@@ -75,7 +75,7 @@ int main(int argc, char ** argv)
     //demo_tabview();   //选项卡
     //demo_msgbox();      //消息盒子
     //demo_type_design();
-    printf("-1 ");
+    //printf("-1 ");
     login_screen();
 
 
