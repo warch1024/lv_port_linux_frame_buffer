@@ -25,6 +25,7 @@ void btn_cb_list(lv_event_t *e);
 void demo_matrix_btn();
 void btnmatrix1_cb(lv_event_t *e);
 void bt_cb(lv_event_t *e);
-void demo_text_area();
-void matrix_btn_cb(lv_event_t * e);
+void demo_text_area_kb();
+void demo_tabview();
+void demo_msgbox();
 #endif

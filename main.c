@@ -63,10 +63,14 @@ int main(int argc, char ** argv)
     //demo_checkbox();    //测试复选框
     //demo_pic_on_btn(argv[1]);   //按钮显示图片
     //demo_freetype_disp("显示中文测试\n");
-    //demo_btn_switch_led();
-    //demo_timer();
+    //demo_btn_switch_led();    //按钮控制led灯
+    //demo_timer(); //定时器
     //demo_lists();   //列表框
-    demo_matrix_btn();
+    //demo_matrix_btn();  //矩阵按钮
+    demo_text_area_kb();   //文本框和键盘
+    //demo_tabview();   //选项卡
+    //demo_msgbox();      //消息盒子
+
     /*Handle LitlevGL tasks (tickless mode)*/
     while(1) {
         lv_timer_handler();

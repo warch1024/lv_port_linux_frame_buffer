@@ -5,6 +5,7 @@
 
 #include"led.h"
 #include "test-1.h"
+#include "lvgl/src/extra/others/ime/lv_ime_pinyin.h"
 #include <unistd.h>
 #include <pthread.h>
 #include <time.h>
@@ -40,10 +41,10 @@ void mydemo()
 }
 void demo_pic()
 {
-
-    lv_obj_t * eva_pic = lv_img_create(lv_scr_act()); // 创建图片对象
-    LV_IMG_DECLARE(eva);           // 声明图片，不是.c里面数组的名字，是结构体的名字
-    lv_img_set_src(eva_pic, &eva); // 设置图片源，不是.c里面数组的名字，是结构体的名字
+    //使用时在make文件加上MAINSRC = ./main.c ./test_1.c ./eva_pic.c 
+    // lv_obj_t * eva_pic = lv_img_create(lv_scr_act()); // 创建图片对象
+    // LV_IMG_DECLARE(eva);           // 声明图片，不是.c里面数组的名字，是结构体的名字
+    // lv_img_set_src(eva_pic, &eva); // 设置图片源，不是.c里面数组的名字，是结构体的名字
 }
 void demo_pic_2()
 {
@@ -302,7 +303,7 @@ lv_obj_t * list_bt1, *list_bt2, *list_bt3, *list_bt4;
 lv_obj_t * list1 ;
 
 void demo_lists(){
-    lv_obj_t * list1 = lv_list_create(lv_scr_act());
+    //lv_obj_t * list1 = lv_list_create(lv_scr_act());
     list1 = lv_list_create(lv_scr_act());
     lv_obj_set_size(list1,400,480);    //设置位置
     lv_obj_set_pos(list1,399,0);    //设置大小
@@ -348,13 +349,32 @@ lv_obj_t* btnmatrix1;
 lv_obj_t * matrix_bt1, *matrix_bt2, *matrix_bt3;
 //矩阵按钮的事件响应函数
 void demo_matrix_btn(){
+      //创建三个按钮-->控制矩阵键盘上按钮的属性
+    //第一个按钮:控制矩阵键盘上所有按钮的隐藏和显示
+    matrix_bt1=lv_btn_create(lv_scr_act());
+    //第二个按钮:控制矩阵键盘上按钮的禁用
+    matrix_bt2=lv_btn_create(lv_scr_act());
+    //第三个按钮:控制矩阵键盘上按钮可以使用
+    matrix_bt3=lv_btn_create(lv_scr_act());
         //创建矩阵按钮
-    btnmatrix1=lv_btnmatrix_create(lv_scr_act());
+    
+    lv_obj_set_size(matrix_bt1,100,50);
+    lv_obj_set_pos(matrix_bt1,10,20);
+    lv_obj_set_size(matrix_bt2,100,50);
+    lv_obj_set_pos(matrix_bt2,10,100);
+    lv_obj_set_size(matrix_bt3,100,50);
+    lv_obj_set_pos(matrix_bt3,10,200);
+     //添加事件响应函数
+    lv_obj_add_event_cb(matrix_bt1,bt_cb,LV_EVENT_CLICKED,NULL);
+    lv_obj_add_event_cb(matrix_bt2,bt_cb,LV_EVENT_CLICKED,NULL);
+    lv_obj_add_event_cb(matrix_bt3,bt_cb,LV_EVENT_CLICKED,NULL);
 
+    btnmatrix1=lv_btnmatrix_create(lv_scr_act());
     //设置位置,大小
     lv_obj_set_size(btnmatrix1,400,480);
     lv_obj_set_pos(btnmatrix1,100,0);
-    const char* btnmatrix_map[] = {"1", "2","3","\n",
+    //本函数返回会释放btnmatrix_map但是其他地方会用到,
+    static const char* btnmatrix_map[] = {"1", "2","3","\n",
                                 "4", "5","6","\n",
                                 "7", "8","9","\n",
                                 "#", "0","En",NULL}; 
@@ -386,14 +406,14 @@ void btnmatrix1_cb(lv_event_t *e)
 
     printf("你点击的那个按钮ID号是: %hu\n",lv_btnmatrix_get_selected_btn(e->target));
 }
-int n=0;
+int click_count=0;
 void bt_cb(lv_event_t *e)
 {
     //判断点击的是哪个按钮
     if(e->target==matrix_bt1)
     {
-        n++;
-        if(n%2==1) //奇数次
+        click_count++;
+        if(click_count%2==1) //奇数次
             //隐藏矩阵键盘上所有的按钮
             lv_btnmatrix_set_btn_ctrl_all(btnmatrix1, LV_BTNMATRIX_CTRL_HIDDEN);
         else
@@ -412,17 +432,61 @@ void bt_cb(lv_event_t *e)
     }
 }
 
-void matrix_btn_cb(lv_event_t * e){
-    uint16_t id;    //存放按钮id
-    //获取点击按钮字面值
-    lv_obj_t * obj = lv_event_get_target(e);
-    
-}
-void demo_text_area(){
-    lv_obj_t * ta = lv_textarea_create(lv_scr_act());
-    lv_obj_t * kb = lv_keyboard_create(lv_scr_act());
+void demo_text_area_kb(){
+    lv_obj_t * ta = lv_textarea_create(lv_scr_act());   //创建文本区
+    //lv_textarea_set_one_line(ta,true);  //限定在一行,框满不会换行,会一直向右增长行
+    //lv_textarea_set_accepted_chars(ta, "0123456789");   //设置限定输入字符
+    //lv_textarea_set_password_mode(ta, true); //密码输入使用*代替,开启密码模式
     lv_obj_set_size(ta,500,200);
-    lv_obj_set_pos(ta,100,0);
-    lv_obj_set_size(kb,400,480);
-    lv_obj_set_pos(kb,100,0);
+    lv_obj_set_pos(ta,150,0);
+   
+
+    //设置默认提示文字
+    static lv_style_t def_text_style;
+    create_font_style(&def_text_style,"/fonts/MSYH.TTC", 20);
+    lv_textarea_set_placeholder_text(ta, "def");
+    lv_obj_add_style(ta, &def_text_style,0);
+
+    lv_obj_t * pinyin_ime = lv_ime_pinyin_create(lv_scr_act()); //创建拼音输入法插件
+    lv_obj_set_size(pinyin_ime, 1, 1);
+    lv_obj_set_pos(pinyin_ime, 0, 0);
+
+    lv_obj_add_style(pinyin_ime, &def_text_style, 0); //输入法候选字显示中文
+    lv_ime_pinyin_set_mode(pinyin_ime, LV_IME_PINYIN_MODE_K26); //设置默认模式
+    lv_obj_t * cand_panel = lv_ime_pinyin_get_cand_panel(pinyin_ime);   //获取拼音候选栏对象
+    lv_obj_set_width(cand_panel, 600); // 设置大小
+    
+    lv_obj_t * kb = lv_keyboard_create(lv_scr_act());   //创建键盘
+     lv_obj_set_size(kb,600,220);
+    lv_obj_set_pos(kb,0,0);     //位置放在0,0否则偏移很大
+    //lv_obj_align_to(cand_panel, kb,LV_ALIGN_BOTTOM_MID, 0, -200); // 对齐到键盘
+
+    lv_ime_pinyin_set_keyboard(pinyin_ime, kb); //将拼音插件绑定到键盘
+    /* 如果使用自定义字典
+        则在lv_config.h将LV_IME_PINYIN_USE_DEFAULT_DICT宏置0
+        使用lv_ime_pinyin_set_dict()设置自定义字典
+        使用lv_ime_pinyin_set_mode()设置输入模式
+    */
+    //软键盘跟文本框关联-->关联之后软键盘输入的字符才可以在文本框显示
+    lv_keyboard_set_textarea(kb,ta);
+
+}
+void demo_tabview(){
+    lv_obj_t * tab_view = lv_tabview_create(lv_scr_act(), LV_DIR_TOP, 50);  //默认放在左上角
+    lv_obj_t * tab_sub1 = lv_tabview_add_tab(tab_view, "tab1");
+    lv_obj_t * tab_sub2 = lv_tabview_add_tab(tab_view, "tab2");
+    lv_obj_t * tab_sub3 = lv_tabview_add_tab(tab_view, "tab3");
+    //向第一个子选项中添加组件
+    lv_obj_t * bt1 = lv_btn_create(tab_sub1); 
+    lv_obj_t * ta = lv_textarea_create(tab_sub2);   //创建文本区
+    lv_obj_t * kb = lv_keyboard_create(tab_sub3);
+    lv_tabview_set_act(tab_view, 1, LV_ANIM_OFF);   //设置默认选项卡
+
+}
+
+
+void demo_msgbox(){
+    static const char * mbbts[] = {"continue", "exit", ""};     //这个函数会结束需将变量延长生命周期
+    lv_obj_t * tab_view = lv_msgbox_create(lv_scr_act(), "new msg","hello",mbbts, false);
+
 }
