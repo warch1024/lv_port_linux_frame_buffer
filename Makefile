@@ -12,7 +12,11 @@ prefix ?= /usr
 bindir ?= $(prefix)/bin
 
 #Collect the files to compile
-MAINSRC = ./main.c ./test_1.c figure_vending_machine/login_screen.c tools/tools.c
+MAINSRC = ./main.c tools/tools.c \
+	figure_vending_machine/figure_vending_machine.c \
+	figure_vending_machine/login_screen.c \
+	figure_vending_machine/main_screen.c
+
 
 include $(LVGL_DIR)/lvgl/lvgl.mk
 include $(LVGL_DIR)/lv_drivers/lv_drivers.mk

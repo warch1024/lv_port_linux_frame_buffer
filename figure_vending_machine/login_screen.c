@@ -57,7 +57,12 @@ void login_screen(){
     lv_obj_add_event_cb(login_screen_page, hidden_kb_cb, LV_EVENT_CLICKED, NULL);   
 
     def_text_style = (lv_style_t * )malloc(sizeof(lv_style_t)); //申请字体style
-    tools_create_font_style(&def_text_style,"/fonts/MSYH.TTC", 20);   //设置提示字体
+    if(def_text_style){
+        tools_create_font_style(def_text_style,"/fonts/MSYH.TTC", 20);   //设置提示字体
+    }
+    else{
+        perror("内存申请失败");
+    }
     //添加小窗
     login_window = lv_obj_create(login_screen_page);
     lv_obj_set_size(login_window, 400, 200);

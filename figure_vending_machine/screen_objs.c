@@ -23,5 +23,4 @@ lv_obj_t                //管理所有页面对象
     
 lv_style_t 
     * def_text_style = NULL;  //默认提示文字的style
-    * 
 

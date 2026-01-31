@@ -3,7 +3,6 @@
 
 /*贩卖机主控制程序
 */
-int figure_vending_machine();
-
+int figure_vending_machine()
 
 #endif
