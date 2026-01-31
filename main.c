@@ -4,7 +4,7 @@
 #include "lv_drivers/indev/evdev.h"
 
 #include "test-1.h"
-#include "26-1-29task/login_screen.h"
+#include "figure_vending_machine/login_screen.h"
 #include <unistd.h>
 #include <pthread.h>
 #include <time.h>
