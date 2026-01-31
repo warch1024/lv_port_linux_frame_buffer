@@ -12,7 +12,10 @@ prefix ?= /usr
 bindir ?= $(prefix)/bin
 
 #Collect the files to compile
-MAINSRC = ./main.c tools/tools.c \
+MAINSRC = \
+	./main.c \
+	tools/tools.c \
+	figure_vending_machine/screen_objs.c \
 	figure_vending_machine/figure_vending_machine.c \
 	figure_vending_machine/login_screen.c \
 	figure_vending_machine/main_screen.c

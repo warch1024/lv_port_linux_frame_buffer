@@ -17,10 +17,10 @@
 #include<stdio.h>
 
 lv_obj_t                //管理所有页面对象
-    * login_screen_page = NULL,
-    * login_window = NULL, 
-    * main_screen_page = NULL;
+    * login_screen_page_o = NULL,
+    * login_window_o = NULL, 
+    * main_screen_page_o = NULL,
+    * logup_window_o = NULL;
     
-lv_style_t 
-    * def_text_style = NULL;  //默认提示文字的style
+lv_style_t * def_text_style = NULL;  //默认提示文字的style
 
