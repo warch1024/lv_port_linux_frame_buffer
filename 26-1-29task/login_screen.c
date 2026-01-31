@@ -12,20 +12,23 @@
 #include <time.h>
 #include <sys/time.h>
 
- static lv_obj_t * login_page, * cn_kb,* user_ta, * psw_ta, *window1, *main_screen_page;
+#include<stdio.h>
+
+ static lv_obj_t * login_page,* user_ta, * psw_ta, *window1, *main_screen_page;
  static lv_style_t def_text_style;
 
 void hidden_kb_cb(lv_event_cb_t * e){   //隐藏键盘回调
-    lv_obj_add_flag(cn_kb, LV_OBJ_FLAG_HIDDEN);//显示键盘
+    tools_hidden_pinyin_kb(tools_cn_kb, tools_cand_pannel);
+    
 }
 void user_ta_cb(lv_event_cb_t *e ){
-    lv_obj_clear_flag(cn_kb, LV_OBJ_FLAG_HIDDEN);//显示键盘
-    lv_keyboard_set_textarea(cn_kb, user_ta);
+    tools_show_pinyin_kb(tools_cn_kb, tools_cand_pannel);
+    lv_keyboard_set_textarea(tools_cn_kb, psw_ta);
     
 }
 void psw_ta_cb(lv_event_cb_t *e ){
-    lv_obj_clear_flag(cn_kb, LV_OBJ_FLAG_HIDDEN);//显示键盘
-    lv_keyboard_set_textarea(cn_kb, psw_ta);
+    tools_show_pinyin_kb(tools_cn_kb, tools_cand_pannel);
+    lv_keyboard_set_textarea(tools_cn_kb, psw_ta);
     
 }
 void login_btn_cb(lv_event_cb_t *e){
@@ -45,8 +48,11 @@ void login_btn_cb(lv_event_cb_t *e){
 }
 
 void login_screen(){
+    
     login_page = lv_obj_create(lv_scr_act());
     lv_obj_set_size(login_page,800,480);
+     //添加键盘
+    tools_create_pinyin_ime(login_page, 500, 200);   //屏幕上添加键盘,默认隐藏
     //添加隐键盘回调函数
     lv_obj_add_event_cb(login_page, hidden_kb_cb, LV_EVENT_CLICKED, NULL);   
 
@@ -58,8 +64,7 @@ void login_screen(){
     lv_obj_align(window1,LV_ALIGN_TOP_MID,0, 0); //设置对齐
 
     //lv_obj_set_pos(window1, 200, 140);
-    //添加键盘
-    cn_kb = tools_create_pinyin_ime(login_page, 500, 200);   //屏幕上添加键盘,默认隐藏
+   
     //用户名输入框
     user_ta = lv_textarea_create(window1);    //添加用户名输入框
     //lv_obj_set_width(user_ta, 300);
@@ -116,4 +121,26 @@ void main_screen()
     //标签设置文字
     lv_obj_add_style(lb1,&def_text_style,0);
     lv_label_set_text(lb1,"粤嵌自助贩卖机主界面");
+
+    //创建展示item
+    lv_obj_t * item1 = lv_img_create(main_screen_page),
+        *item2 = lv_img_create(main_screen_page),
+        *item3 = lv_img_create(main_screen_page);
+
+    lv_obj_set_size(item1,200,400);
+    lv_obj_set_size(item2,200,400);
+    lv_obj_set_size(item3,200,400);
+
+    lv_obj_align_to(item1, main_screen_page, LV_ALIGN_TOP_LEFT, 0, 0);
+    lv_obj_align_to(item2, main_screen_page, LV_ALIGN_TOP_MID, 0, 0);
+    lv_obj_align_to(item3, main_screen_page, LV_ALIGN_TOP_RIGHT, 0, 0);
+
+    lv_obj_t * item1_img = lv_img_create(item1),
+        * item2_img = lv_img_create(item2),
+        * item3_img = lv_img_create(item3);  //创建图片
+    
+    lv_img_set_src(item1_img, "S:/IOT/projects/26-1-30/resources/item1.jpeg"); // 设置图片路径名
+    lv_img_set_src(item2_img, "S:/IOT/projects/26-1-30/resources/item2.jpeg"); // 设置图片路径名
+    lv_img_set_src(item3_img, "S:/IOT/projects/26-1-30/resources/item3.jpeg"); // 设置图片路径名
+
 }
