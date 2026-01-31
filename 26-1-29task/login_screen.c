@@ -14,7 +14,7 @@
 
 #include<stdio.h>
 
- static lv_obj_t * login_page,* user_ta, * psw_ta, *window1, *main_screen_page;
+ static lv_obj_t * login_screen_page,* user_ta, * psw_ta, *login_window, *main_screen_page;
  static lv_style_t def_text_style;
 
 void hidden_kb_cb(lv_event_cb_t * e){   //隐藏键盘回调
@@ -23,7 +23,7 @@ void hidden_kb_cb(lv_event_cb_t * e){   //隐藏键盘回调
 }
 void user_ta_cb(lv_event_cb_t *e ){
     tools_show_pinyin_kb(tools_cn_kb, tools_cand_pannel);
-    lv_keyboard_set_textarea(tools_cn_kb, psw_ta);
+    lv_keyboard_set_textarea(tools_cn_kb, user_ta);
     
 }
 void psw_ta_cb(lv_event_cb_t *e ){
@@ -43,33 +43,33 @@ void login_btn_cb(lv_event_cb_t *e){
         //跳到主界面
         main_screen();
         //关闭释放登录界面
-        lv_obj_del(window1);
+        lv_obj_del(login_window);
     }
 }
 
 void login_screen(){
     
-    login_page = lv_obj_create(lv_scr_act());
-    lv_obj_set_size(login_page,800,480);
+    login_screen_page = lv_obj_create(lv_scr_act());
+    lv_obj_set_size(login_screen_page,800,480);
      //添加键盘
-    tools_create_pinyin_ime(login_page, 500, 200);   //屏幕上添加键盘,默认隐藏
+    tools_create_pinyin_ime(login_screen_page, 500, 200);   //屏幕上添加键盘,默认隐藏
     //添加隐键盘回调函数
-    lv_obj_add_event_cb(login_page, hidden_kb_cb, LV_EVENT_CLICKED, NULL);   
+    lv_obj_add_event_cb(login_screen_page, hidden_kb_cb, LV_EVENT_CLICKED, NULL);   
 
-    create_font_style(&def_text_style,"/fonts/MSYH.TTC", 20);   //设置提示字体
+    tools_create_font_style(&def_text_style,"/fonts/MSYH.TTC", 20);   //设置提示字体
     //添加小窗
-    window1 = lv_obj_create(login_page);
-    lv_obj_set_size(window1, 400, 200);
+    login_window = lv_obj_create(login_screen_page);
+    lv_obj_set_size(login_window, 400, 200);
     //lv_obj_set_pos(window1, 200, 0);
-    lv_obj_align(window1,LV_ALIGN_TOP_MID,0, 0); //设置对齐
+    lv_obj_align(login_window,LV_ALIGN_TOP_MID,0, 0); //设置对齐
 
     //lv_obj_set_pos(window1, 200, 140);
    
     //用户名输入框
-    user_ta = lv_textarea_create(window1);    //添加用户名输入框
+    user_ta = lv_textarea_create(login_window);    //添加用户名输入框
     //lv_obj_set_width(user_ta, 300);
     lv_obj_set_size(user_ta, 200, 50);  //设置尺寸
-    lv_obj_align_to(user_ta,window1,LV_ALIGN_TOP_MID,0,-10);    //对齐到小窗
+    lv_obj_align_to(user_ta,login_window,LV_ALIGN_TOP_MID,0,-10);    //对齐到小窗
     lv_textarea_set_placeholder_text(user_ta, "输入用户名");
     lv_obj_add_style(user_ta, &def_text_style,0);
     lv_textarea_set_one_line(user_ta,true);  //限定在一行,框满不会换行,会一直向右增长行
@@ -78,7 +78,7 @@ void login_screen(){
     lv_obj_add_event_cb(user_ta, user_ta_cb,LV_EVENT_FOCUSED,NULL);   //添加输入框回调函数
 
     //密码输入框
-    psw_ta = lv_textarea_create(window1);  //添加密码窗口
+    psw_ta = lv_textarea_create(login_window);  //添加密码窗口
     lv_obj_set_size(psw_ta, 200, 50);
     lv_obj_align_to(psw_ta,user_ta,LV_ALIGN_TOP_MID,0,50);
     lv_textarea_set_placeholder_text(psw_ta, "输入密码");
@@ -89,7 +89,7 @@ void login_screen(){
     lv_obj_add_event_cb(psw_ta, psw_ta_cb,LV_EVENT_FOCUSED,NULL);   //添加输入框回调函数
  
     //添加登录按钮
-    lv_obj_t * login_bt = lv_btn_create(window1);   
+    lv_obj_t * login_bt = lv_btn_create(login_window);   
     // 设置按钮的坐标位置和大小-->设置某个属性
     lv_obj_set_size(login_bt, 80, 40);
     lv_obj_align_to(login_bt,psw_ta,LV_ALIGN_TOP_MID,0,50);
@@ -109,7 +109,7 @@ void login_screen(){
 
 void main_screen()
 {
-    //创建小窗口
+    //创建主窗口
     main_screen_page=lv_obj_create(lv_scr_act());
 
     //设置menu2的大小
@@ -122,22 +122,22 @@ void main_screen()
     lv_obj_add_style(lb1,&def_text_style,0);
     lv_label_set_text(lb1,"粤嵌自助贩卖机主界面");
 
-    //创建展示item
-    lv_obj_t * item1 = lv_img_create(main_screen_page),
-        *item2 = lv_img_create(main_screen_page),
-        *item3 = lv_img_create(main_screen_page);
+    //新建3个小窗
+    lv_obj_t * item1_window = lv_obj_create(main_screen_page),
+        * item2_window = lv_obj_create(main_screen_page),
+        * item3_window = lv_obj_create(main_screen_page);
+    
+    lv_obj_set_size(item1_window,200,300);
+    lv_obj_set_size(item2_window,200,300);
+    lv_obj_set_size(item3_window,200,300);
 
-    lv_obj_set_size(item1,200,400);
-    lv_obj_set_size(item2,200,400);
-    lv_obj_set_size(item3,200,400);
-
-    lv_obj_align_to(item1, main_screen_page, LV_ALIGN_TOP_LEFT, 0, 0);
-    lv_obj_align_to(item2, main_screen_page, LV_ALIGN_TOP_MID, 0, 0);
-    lv_obj_align_to(item3, main_screen_page, LV_ALIGN_TOP_RIGHT, 0, 0);
-
-    lv_obj_t * item1_img = lv_img_create(item1),
-        * item2_img = lv_img_create(item2),
-        * item3_img = lv_img_create(item3);  //创建图片
+    lv_obj_align_to(item1_window, main_screen_page, LV_ALIGN_TOP_LEFT, 0, 50);
+    lv_obj_align_to(item2_window, main_screen_page, LV_ALIGN_TOP_MID, 0, 50);
+    lv_obj_align_to(item3_window, main_screen_page, LV_ALIGN_TOP_RIGHT, 0, 50);
+    //新建3个图片对象
+    lv_obj_t * item1_img = lv_img_create(item1_window),
+        *item2_img = lv_img_create(item2_window),
+        *item3_img = lv_img_create(item3_window);
     
     lv_img_set_src(item1_img, "S:/IOT/projects/26-1-30/resources/item1.jpeg"); // 设置图片路径名
     lv_img_set_src(item2_img, "S:/IOT/projects/26-1-30/resources/item2.jpeg"); // 设置图片路径名
