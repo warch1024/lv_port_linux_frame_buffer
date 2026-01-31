@@ -4,9 +4,10 @@
 #include "lv_drivers/indev/evdev.h"
 
 
+#include "figure_vending_machine/main_screen.h"
 #include "tools/tools.h"
 #include "figure_vending_machine/login_screen.h"
-#include "figure_vending_machine/main_screen.h"
+#include "figure_vending_machine/screen_objs.h"
 
 #include <unistd.h>
 #include <pthread.h>

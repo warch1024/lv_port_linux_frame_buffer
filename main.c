@@ -76,7 +76,9 @@ int main(int argc, char ** argv)
     //demo_msgbox();      //消息盒子
     //demo_type_design();
     //printf("-1 ");
-    login_screen();
+    //login_screen();
+
+    figure_vending_machine();
 
 
     /*Handle LitlevGL tasks (tickless mode)*/

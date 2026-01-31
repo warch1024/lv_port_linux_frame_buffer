@@ -3,9 +3,10 @@
 #include "lv_drivers/display/fbdev.h"
 #include "lv_drivers/indev/evdev.h"
 
-
-#include "tools/tools.h"
 #include "figure_vending_machine/login_screen.h"
+#include "tools/tools.h"
+#include "figure_vending_machine/main_screen.h"
+#include "figure_vending_machine/screen_objs.h"
 
 #include <unistd.h>
 #include <pthread.h>
@@ -14,8 +15,7 @@
 
 #include<stdio.h>
 
- static lv_obj_t * login_screen_page,* user_ta, * psw_ta, *login_window, *main_screen_page;
- static lv_style_t def_text_style;
+ static lv_obj_t * user_ta, * psw_ta;
 
 void hidden_kb_cb(lv_event_cb_t * e){   //隐藏键盘回调
     tools_hidden_pinyin_kb(tools_cn_kb, tools_cand_pannel);
@@ -56,6 +56,7 @@ void login_screen(){
     //添加隐键盘回调函数
     lv_obj_add_event_cb(login_screen_page, hidden_kb_cb, LV_EVENT_CLICKED, NULL);   
 
+    def_text_style = (lv_style_t * )malloc(sizeof(lv_style_t)); //申请字体style
     tools_create_font_style(&def_text_style,"/fonts/MSYH.TTC", 20);   //设置提示字体
     //添加小窗
     login_window = lv_obj_create(login_screen_page);
