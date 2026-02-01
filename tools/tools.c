@@ -1,15 +1,4 @@
-#include "lvgl/lvgl.h"
-#include "lvgl/demos/lv_demos.h"
-#include "lv_drivers/display/fbdev.h"
-#include "lv_drivers/indev/evdev.h"
-
-#include "lvgl/src/extra/others/ime/lv_ime_pinyin.h"
 #include "tools/tools.h"
-#include <unistd.h>
-#include <pthread.h>
-#include <time.h>
-#include <sys/time.h>
-#include <strings.h>
 
 
 lv_obj_t * tools_cn_kb = NULL, *tools_cand_pannel = NULL;
@@ -81,4 +70,21 @@ void tools_show_pinyin_kb(lv_obj_t * kb, lv_obj_t * cp){
         lv_obj_clear_flag(kb, LV_OBJ_FLAG_HIDDEN);//隐藏键盘
         lv_obj_clear_flag(cp, LV_OBJ_FLAG_HIDDEN);//隐藏键盘
     }
+}
+
+lv_obj_t* tools_create_login_ta(lv_obj_t* parent_o, int width, int height, char* pht){
+    lv_obj_t* ta_obj = lv_textarea_create(parent_o);    //添加输入框
+    lv_obj_set_size(ta_obj, width, height);  //设置尺寸
+    lv_textarea_set_placeholder_text(ta_obj, pht);  //设置提示词
+    lv_obj_add_style(ta_obj, def_text_style,0);     //中文支持
+    lv_textarea_set_one_line(ta_obj,true);  //限定在一行
+    lv_textarea_set_max_length(ta_obj ,8);  //限制用户名长度
+    return ta_obj;
+}
+lv_obj_t* tools_create_login_bt_lb(lv_obj_t* parent_o,char* text){ //给登录窗口按钮添加标签
+    lv_obj_t * bt_lb_obj = lv_label_create(parent_o); // 按钮作为标签的父窗口,等一会标签就会嵌套到按钮上
+    lv_obj_align_to(bt_lb_obj, parent_o ,LV_ALIGN_CENTER,-5,-2); //设置对齐
+    lv_obj_add_style(bt_lb_obj, def_text_style, 0);   //给组件添加样式
+    lv_label_set_text(bt_lb_obj, text);   //给标签添加文字
+    return bt_lb_obj;
 }

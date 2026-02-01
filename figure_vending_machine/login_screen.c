@@ -1,19 +1,6 @@
-#include "lvgl/lvgl.h"
-#include "lvgl/demos/lv_demos.h"
-#include "lv_drivers/display/fbdev.h"
-#include "lv_drivers/indev/evdev.h"
+#include "figure_vending_machine/login_screen.h"    
 
-#include "figure_vending_machine/login_screen.h"
-#include "tools/tools.h"
-#include "figure_vending_machine/main_screen.h"
-#include "figure_vending_machine/screen_objs.h"
-
-#include <unistd.h>
-#include <pthread.h>
-#include <time.h>
-#include <sys/time.h>
-
-#include<stdio.h>
+// #include"figure_vending_machine/screen_objs.h"
 
  static lv_obj_t * user_ta, * psw_ta, * cf_psw_ta,
     * login_bt, * logup_bt, * sm_logup_bt, * bk_logup_bt;
@@ -55,8 +42,10 @@ void login_btn_cb(lv_event_t *e){   //登录按钮回调函数
 }
 
 void login_screen(){        //登陆界面
-    
-    login_screen_page_o = lv_obj_create(lv_scr_act());
+
+    if(!login_screen_page_o){   //避免内存溢出
+        login_screen_page_o = lv_obj_create(lv_scr_act());
+    }
     lv_obj_set_size(login_screen_page_o,800,480);
      //添加键盘
     tools_create_pinyin_ime(login_screen_page_o, 500, 200);   //屏幕上添加键盘,默认隐藏
@@ -74,36 +63,24 @@ void login_screen(){        //登陆界面
     login_window(); //显示登录框
 }
 
-lv_obj_t* create_login_ta(lv_obj_t* parent_o, int width, int height, char* pht){
-    lv_obj_t* ta_obj = lv_textarea_create(parent_o);    //添加输入框
-    lv_obj_set_size(ta_obj, width, height);  //设置尺寸
-    lv_textarea_set_placeholder_text(ta_obj, pht);  //设置提示词
-    lv_obj_add_style(ta_obj, def_text_style,0);     //中文支持
-    lv_textarea_set_one_line(ta_obj,true);  //限定在一行
-    lv_textarea_set_max_length(ta_obj ,8);  //限制用户名长度
-    return ta_obj;
-}
-lv_obj_t* create_login_bt_lb(lv_obj_t* parent_o,char* text){ //给登录窗口按钮添加标签
-    lv_obj_t * bt_lb_obj = lv_label_create(parent_o); // 按钮作为标签的父窗口,等一会标签就会嵌套到按钮上
-    lv_obj_align_to(bt_lb_obj, parent_o ,LV_ALIGN_CENTER,-5,-2); //设置对齐
-    lv_obj_add_style(bt_lb_obj, def_text_style, 0);   //给组件添加样式
-    lv_label_set_text(bt_lb_obj, text);   //给标签添加文字
-    return bt_lb_obj;
-}
+
 void login_window(){    //登录界面
     
     //添加小窗
-    login_window_o = lv_obj_create(login_screen_page_o);
+    if(!login_window_o){    //避免内存溢出
+
+        login_window_o = lv_obj_create(login_screen_page_o);
+    }
     lv_obj_set_size(login_window_o, 300, 200);
     lv_obj_align(login_window_o,LV_ALIGN_TOP_MID,0, -10); //设置对齐
 
     //用户名输入框
-    user_ta = create_login_ta(login_window_o, 200, 40, "输入用户名");
+    user_ta = tools_create_login_ta(login_window_o, 200, 40, "输入用户名");
     lv_obj_align_to(user_ta,login_window_o,LV_ALIGN_TOP_MID,0,-10);    //对齐到窗口
     lv_obj_add_event_cb(user_ta, ta_kb_associate_cb,LV_EVENT_FOCUSED,NULL);   //添加输入框回调函数
 
     //密码输入框
-    psw_ta = create_login_ta(login_window_o, 200, 40, "输入密码");  //添加密码窗口
+    psw_ta = tools_create_login_ta(login_window_o, 200, 40, "输入密码");  //添加密码窗口
     lv_obj_align_to(psw_ta,user_ta,LV_ALIGN_OUT_BOTTOM_MID,0,5);
 
     lv_textarea_set_accepted_chars(psw_ta, "0123456789");   //设置限定输入字符
@@ -119,7 +96,7 @@ void login_window(){    //登录界面
     lv_obj_add_event_cb(login_bt, login_btn_cb, LV_EVENT_CLICKED, NULL);   //添加按钮点击回调函数
 
     //给按钮添加标签
-    lv_obj_t * login_bt_lb = create_login_bt_lb(login_bt, "登录");
+    lv_obj_t * login_bt_lb = tools_create_login_bt_lb(login_bt, "登录");
 
      //添加注册按钮
     logup_bt = lv_btn_create(login_window_o);   
@@ -129,13 +106,13 @@ void login_window(){    //登录界面
     lv_obj_add_event_cb(logup_bt, logup_btn_cb, LV_EVENT_CLICKED, NULL);   //添加按钮点击回调函数
 
     //给按钮添加标签
-    lv_obj_t * logup_bt_lb = create_login_bt_lb(logup_bt, "注册"); // 按钮作为标签的父窗口,等一会标签就会嵌套到按钮上
+    lv_obj_t * logup_bt_lb = tools_create_login_bt_lb(logup_bt, "注册"); // 按钮作为标签的父窗口,等一会标签就会嵌套到按钮上
 
 }
 
 void logup_btn_cb(lv_event_t * e){  //注册回调函数
     logup_window(); //打开注册窗口
-    
+
 }
 void logup_window(){    //注册界面
     //删除按钮
@@ -158,7 +135,7 @@ void logup_window(){    //注册界面
     lv_textarea_set_password_mode(psw_ta, false); //关闭密码模式
 
     //确认密码框
-    cf_psw_ta = create_login_ta(login_window_o, 200, 40, "重复设置密码");
+    cf_psw_ta = tools_create_login_ta(login_window_o, 200, 40, "重复设置密码");
     lv_obj_align_to(cf_psw_ta,psw_ta,LV_ALIGN_OUT_BOTTOM_MID,0,5);
     lv_textarea_set_accepted_chars(cf_psw_ta, "0123456789");   //设置限定输入字符
     lv_textarea_set_password_mode(cf_psw_ta, false); //密码输入使用*代替,开启密码模式
@@ -172,7 +149,7 @@ void logup_window(){    //注册界面
     lv_obj_add_event_cb(sm_logup_bt, sm_logup_btn_cb, LV_EVENT_CLICKED, NULL);   //添加按钮点击回调函数
 
     //给按钮添加标签
-    lv_obj_t * sm_logup_bt_lb = create_login_bt_lb(sm_logup_bt, "提交");
+    lv_obj_t * sm_logup_bt_lb = tools_create_login_bt_lb(sm_logup_bt, "提交");
 
      //添加返回登陆界面按钮
     bk_logup_bt = lv_btn_create(login_window_o);   
@@ -182,27 +159,27 @@ void logup_window(){    //注册界面
     lv_obj_add_event_cb(bk_logup_bt, bk_logup_btn_cb, LV_EVENT_CLICKED, NULL);   //添加按钮点击回调函数
 
     //给按钮添加标签
-    lv_obj_t * bk_logup_bt_lb = create_login_bt_lb(bk_logup_bt, "返回"); // 按钮作为标签的父窗口,等一会标签就会嵌套到按钮上
+    lv_obj_t * bk_logup_bt_lb = tools_create_login_bt_lb(bk_logup_bt, "返回"); // 按钮作为标签的父窗口,等一会标签就会嵌套到按钮上
 
 }
 
 
-void sm_logup_btn_cb(lv_event_t * e){  //注册提交
-    printf("返回等克鲁");
+void sm_logup_btn_cb(lv_event_t * e){  //注册提交按钮点击回调服务
+    user_register("/IOT/projects/26-1-30/user_info.txt");
     if(user_ta && psw_ta && cf_psw_ta){
         char *logup_name=lv_textarea_get_text(user_ta);
         char *logup_passwd=lv_textarea_get_text(psw_ta);
         char *logup_cf_passwd=lv_textarea_get_text(cf_psw_ta);
-        if(1 || strcmp(logup_passwd, logup_cf_passwd) == 0){
+        if(strcmp(logup_passwd, logup_cf_passwd) == 0){
             //注册成功，返回登陆界面
-            back_to_login_screen();
+            lv_obj_del(login_window_o); // 删除登录窗口，重新注册登录窗口
+            login_window_o = NULL;
+            login_window();
         }
     }
 }
 
-void back_to_login_screen(){
-    printf("返回等克鲁");
-}
+
 
 void bk_logup_btn_cb(lv_event_t * e){    //返回主界面
     lv_obj_del(login_window_o);  //登录窗口与全子
@@ -210,3 +187,6 @@ void bk_logup_btn_cb(lv_event_t * e){    //返回主界面
     login_window();
 }
 
+void save_logup_info(){ //保存用户信息
+    
+}
