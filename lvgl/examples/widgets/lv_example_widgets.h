@@ -115,7 +115,7 @@ void lv_example_slider_1(void);
 void lv_example_slider_2(void);
 void lv_example_slider_3(void);
 
-void lv_example_spinbox_1(void);
+void spinbox_1(void);
 
 void lv_example_spinner_1(void);
 

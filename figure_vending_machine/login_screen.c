@@ -43,11 +43,7 @@ void login_btn_cb(lv_event_t *e){   //登录按钮回调函数
     //判断用户名和密码是否正确
     if(1 || strcmp(name,"gec")==0 && strcmp(passwd,"123456")==0)
     {
-        //关闭释放登录界面
-        // lv_obj_del(login_window_o);
-        // login_window_o = NULL;
-        // lv_obj_del(login_screen_o);
-        // login_screen_o = NULL;
+
         //跳到主界面
         main_screen();
     }
@@ -62,10 +58,12 @@ void login_change_theme_checkbox_cb(lv_event_t * e){  //复选框点击回调函
             lv_style_set_bg_img_src(login_bg_style, "S:/IOT/projects/26-1-30/resources/login_bg1.jpg");
             // 设置背景图片的裁剪（可选）
             lv_style_set_bg_img_opa(login_bg_style, LV_OPA_COVER);
-            
             // 应用样式到屏幕
             lv_obj_add_style(login_screen_o, login_bg_style, 0);
+            lv_obj_set_style_text_color(login_check_box1, lv_color_hex(0xffffff), LV_PART_MAIN);  // 设置为白色
+            lv_obj_set_style_text_color(login_check_box2, lv_color_hex(0xffffff), LV_PART_MAIN);  // 设置为白色
         }
+
         else if(e->target == login_check_box2){
             lv_obj_clear_state(login_check_box1, LV_STATE_CHECKED);//取消1选择
             
@@ -76,6 +74,8 @@ void login_change_theme_checkbox_cb(lv_event_t * e){  //复选框点击回调函
             
             // 应用样式到屏幕
             lv_obj_add_style(login_screen_o, login_bg_style, 0);
+            lv_obj_set_style_text_color(login_check_box1, lv_color_hex(0x000000), LV_PART_MAIN);  // 设置为白色
+            lv_obj_set_style_text_color(login_check_box2, lv_color_hex(0x000000), LV_PART_MAIN);  // 设置为白色
         }
     }
 }
@@ -150,11 +150,7 @@ void login_window(){    //登录界面
     if(!login_window_opa_style){ //登录窗口的透明度主题
         login_window_opa_style = (lv_style_t *)malloc(sizeof(lv_style_t));
     }
-    if(login_window_opa_style){  //设置样式
-        lv_style_init(login_window_opa_style);   //必须初始化
-        lv_style_set_bg_opa(login_window_opa_style, LV_OPA_50);
-        lv_obj_add_style(login_window_o, login_window_opa_style, 0);
-    }
+    tools_set_opa_style(login_window_opa_style, login_window_o, LV_OPA_50);
 
     //用户名输入框
     user_ta = tools_create_login_ta(login_window_o, 200, 40, "输入用户名");

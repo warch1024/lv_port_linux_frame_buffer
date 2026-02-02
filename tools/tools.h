@@ -81,4 +81,19 @@ lv_obj_t * tools_create_login_checkbox(lv_obj_t * parent_o, int width, int heigh
 */
 void tools_ta_kb_associate(lv_obj_t * ta, lv_obj_t * kb);
 
+/*设置透明度样式
+* @param opa_style 透明度样式
+* @param obj 透明度对象
+* @param opa_value 透明度值
+*/
+void tools_set_opa_style(lv_style_t * opa_style, lv_obj_t * obj, lv_opa_t opa_value);
+
+/*设置背景样式
+* @param bg_style 背景样式
+* @param obj 背景对象
+* @param opa_value 透明度值
+* @param fig_path 背景图片路径
+*/
+void tools_set_bg_style(lv_style_t * bg_style, lv_obj_t * obj, lv_opa_t opa_value, char * fig_path);
+
 #endif

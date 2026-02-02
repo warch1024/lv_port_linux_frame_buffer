@@ -112,3 +112,34 @@ void tools_ta_kb_associate(lv_obj_t * ta, lv_obj_t * kb){
         lv_keyboard_set_textarea(kb, ta);
     }
 }
+//给obj设置透明度,参数 LV_OPA_10
+void tools_set_opa_style(lv_style_t * opa_style, lv_obj_t * obj, lv_opa_t opa_value){
+    //  if(!main_screen_opa_style){ //登录窗口的透明度主题
+    //     main_screen_opa_style = (lv_style_t *)malloc(sizeof(lv_style_t));
+    // }
+    if(opa_style){  //设置样式
+        lv_style_init(opa_style);   //必须初始化
+        lv_style_set_bg_opa(opa_style, opa_value);
+        lv_obj_add_style(obj, opa_style, 0);
+    }
+}
+
+
+void tools_set_bg_style(lv_style_t * bg_style, lv_obj_t * obj, lv_opa_t opa_value, char * fig_path){
+
+    if(bg_style && obj){
+
+        //先移除旧背景
+        lv_obj_remove_style(obj, bg_style, LV_PART_ANY | LV_STATE_ANY);  //移除背景
+        lv_style_init(bg_style);
+        //lv_obj_add_state(login_check_box2, LV_STATE_CHECKED);//默认主题2
+        
+        // 设置背景图片
+        lv_style_set_bg_img_src(bg_style, fig_path);
+        // 设置背景图片的透明度
+        lv_style_set_bg_img_opa(bg_style, opa_value);
+        
+        // 应用样式到屏幕
+        lv_obj_add_style(obj, bg_style, 0);
+    }
+}
