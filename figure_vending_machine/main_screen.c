@@ -3,32 +3,34 @@
 
 void main_screen()
 {
+    
     //创建主窗口
-    main_screen_page_o=lv_obj_create(lv_scr_act());
-
-    //设置menu2的大小
-    lv_obj_set_size(main_screen_page_o,800,480);
+    main_screen_o=lv_obj_create(NULL);
+    //设置大小
+    lv_obj_set_size(main_screen_o,800,480);
+    //加载主界面删除旧窗口
+    lv_scr_load_anim(main_screen_o, LV_SCR_LOAD_ANIM_MOVE_LEFT, 300, 0, true);
 
      //创建标签
-    lv_obj_t *lb1=lv_label_create(main_screen_page_o);
-    lv_obj_set_align(lb1,LV_ALIGN_TOP_MID);
+    lv_obj_t *main_screen_title=lv_label_create(main_screen_o);
+    lv_obj_set_align(main_screen_title,LV_ALIGN_TOP_MID);
     //标签设置文字
-    lv_obj_add_style(lb1,def_text_style,0);
-    lv_label_set_text(lb1,"粤嵌自助贩卖机主界面");
+    lv_obj_add_style(main_screen_title,def_text_style,0);
+    lv_label_set_text(main_screen_title,"2233扭蛋自主贩卖机");
 
     //新建3个小窗
 
-    lv_obj_t * item1_window = lv_obj_create(main_screen_page_o),
-        * item2_window = lv_obj_create(main_screen_page_o),
-        * item3_window = lv_obj_create(main_screen_page_o),
-        * item4_window = lv_obj_create(main_screen_page_o);
+    lv_obj_t * item1_window = lv_obj_create(main_screen_o),
+        * item2_window = lv_obj_create(main_screen_o),
+        * item3_window = lv_obj_create(main_screen_o),
+        * item4_window = lv_obj_create(main_screen_o);
     
     lv_obj_set_size(item1_window,250,350);
     lv_obj_set_size(item2_window,250,350);
     lv_obj_set_size(item3_window,250,350);
     lv_obj_set_size(item4_window,250,350);
 
-    lv_obj_align_to(item1_window, main_screen_page_o, LV_ALIGN_TOP_LEFT, 0, 50);
+    lv_obj_align_to(item1_window, main_screen_o, LV_ALIGN_TOP_LEFT, 0, 50);
     lv_obj_align_to(item2_window, item1_window, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
     lv_obj_align_to(item3_window, item2_window, LV_ALIGN_OUT_RIGHT_MID, 0, 0);
     lv_obj_align_to(item4_window, item3_window, LV_ALIGN_OUT_RIGHT_MID, 0, 0);

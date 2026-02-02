@@ -1,6 +1,7 @@
 #include "figure_vending_machine/user_info_mangm.h"
 
 
+
 user_info * input_info(){   //提取输入的用户名和密码
     user_info * user_tmp = (user_info *)malloc(sizeof(user_info));
     if(user_tmp){

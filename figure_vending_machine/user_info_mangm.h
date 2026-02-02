@@ -7,12 +7,12 @@
 #include"figure_vending_machine/screen_objs.h"  //标准库
 
 // #include<stdio.h>
+
 typedef struct User_info
 {
     char user_name[10];
     char user_pwd[20];
 }user_info;
-
 
 /* 输入用户信息
  * @brief 输入用户信息

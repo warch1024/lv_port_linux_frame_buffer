@@ -1,25 +1,37 @@
 #include "figure_vending_machine/login_screen.h"    
 
 // #include"figure_vending_machine/screen_objs.h"
+//登录屏幕的所有组件
+ static lv_obj_t * login_window_o = NULL,     //登录窗口
+    * user_ta= NULL, * psw_ta= NULL, * cf_psw_ta= NULL, //输入框
+    * login_bt= NULL, * logup_bt= NULL, * sm_logup_bt= NULL, * bk_logup_bt= NULL,   //按钮
+    * login_check_box1= NULL, * login_check_box2= NULL; //复选框
 
- static lv_obj_t * user_ta, * psw_ta, * cf_psw_ta,
-    * login_bt, * logup_bt, * sm_logup_bt, * bk_logup_bt;
+//登陆屏幕的所有样式
+static lv_style_t * login_bg_style = NULL,  //登录屏幕背景设置样式
+    * login_window_opa_style = NULL;     //登录窗口透明度设置样式
+
+//键盘和中文支持
+static cn_kb_cp_pair login_cn_kb_pair = {.cn_kb = NULL, .cn_kb_cp = NULL};
+//默认主题图片路径
+static char * def_login_theme_path = "S:/IOT/projects/26-1-30/resources/login_bg2.jpg"; 
+
+//初始化登录屏幕基础组件
+void login_screen_base_wigdet_init(lv_obj_t * screen){
+   
+    
+    
+}
 
 void hidden_kb_cb(lv_event_t * e){   //隐藏键盘回调
-    tools_hidden_pinyin_kb(tools_cn_kb, tools_cand_pannel);
+    tools_hidden_pinyin_kb(login_cn_kb_pair.cn_kb, login_cn_kb_pair.cn_kb_cp);
     
 }
 void ta_kb_associate_cb(lv_event_t * e){
-    tools_show_pinyin_kb(tools_cn_kb, tools_cand_pannel);
-    if(e->target == user_ta){
-        lv_keyboard_set_textarea(tools_cn_kb, user_ta);
-    }
-    else if(e->target == psw_ta){
-        lv_keyboard_set_textarea(tools_cn_kb, psw_ta);
-    }
-    else if(e->target == cf_psw_ta){
-        lv_keyboard_set_textarea(tools_cn_kb, cf_psw_ta);
-    }
+    //显示键盘
+    tools_show_pinyin_kb(login_cn_kb_pair.cn_kb, login_cn_kb_pair.cn_kb_cp);
+    //连接键盘和输入框
+    tools_ta_kb_associate(e->target, login_cn_kb_pair.cn_kb);
 }
 
 void login_btn_cb(lv_event_t *e){   //登录按钮回调函数
@@ -32,35 +44,96 @@ void login_btn_cb(lv_event_t *e){   //登录按钮回调函数
     if(1 || strcmp(name,"gec")==0 && strcmp(passwd,"123456")==0)
     {
         //关闭释放登录界面
-        lv_obj_del(login_window_o);
-        login_window_o = NULL;
-        lv_obj_del(login_screen_page_o);
-        login_screen_page_o = NULL;
+        // lv_obj_del(login_window_o);
+        // login_window_o = NULL;
+        // lv_obj_del(login_screen_o);
+        // login_screen_o = NULL;
         //跳到主界面
         main_screen();
     }
 }
-
-void login_screen(){        //登陆界面
-
-    if(!login_screen_page_o){   //避免内存溢出
-        login_screen_page_o = lv_obj_create(lv_scr_act());
+void login_change_theme_checkbox_cb(lv_event_t * e){  //复选框点击回调函数
+    lv_obj_remove_style(login_screen_o, login_bg_style, LV_PART_ANY | LV_STATE_ANY);  //移除背景
+    //给主屏幕添加图片
+    if(login_bg_style){
+        if(e->target == login_check_box1){
+            lv_obj_clear_state(login_check_box2, LV_STATE_CHECKED);//取消2选择
+            // 设置背景图片
+            lv_style_set_bg_img_src(login_bg_style, "S:/IOT/projects/26-1-30/resources/login_bg1.jpg");
+            // 设置背景图片的裁剪（可选）
+            lv_style_set_bg_img_opa(login_bg_style, LV_OPA_COVER);
+            
+            // 应用样式到屏幕
+            lv_obj_add_style(login_screen_o, login_bg_style, 0);
+        }
+        else if(e->target == login_check_box2){
+            lv_obj_clear_state(login_check_box1, LV_STATE_CHECKED);//取消1选择
+            
+            // 设置背景图片
+            lv_style_set_bg_img_src(login_bg_style, "S:/IOT/projects/26-1-30/resources/login_bg2.jpg");
+            // 设置背景图片的裁剪（可选）
+            lv_style_set_bg_img_opa(login_bg_style, LV_OPA_COVER);
+            
+            // 应用样式到屏幕
+            lv_obj_add_style(login_screen_o, login_bg_style, 0);
+        }
     }
-    lv_obj_set_size(login_screen_page_o,800,480);
+}
+void load_def_login_theme(lv_obj_t * screen_o, char * def_theme_path){  //登陆界面的默认主题
+    if(!login_bg_style){    //只初始化一次，存放style
+
+        login_bg_style = (lv_style_t * )malloc(sizeof(lv_style_t));
+    }
+    lv_style_init(login_bg_style);
+    lv_obj_add_state(login_check_box2, LV_STATE_CHECKED);//默认主题2
+    //lv_obj_remove_style(login_screen_page_o, login_bg_style, LV_PART_ANY | LV_STATE_ANY);  //移除背景
+    
+    // 设置背景图片
+    lv_style_set_bg_img_src(login_bg_style, def_theme_path);
+    // 设置背景图片的裁剪（可选）
+    lv_style_set_bg_img_opa(login_bg_style, LV_OPA_COVER);
+    
+    // 应用样式到屏幕
+    lv_obj_add_style(login_screen_o, login_bg_style, 0);
+}
+
+
+void add_switch_full_screen_theme_checkbox(lv_obj_t * full_screen_o){    //给屏幕添加复选框，切换主题
+
+    login_check_box1 = tools_create_login_checkbox(full_screen_o, -1, -1, "CYBER"); //新建复选框
+    lv_obj_align_to(login_check_box1, full_screen_o, LV_ALIGN_TOP_LEFT, 0, 0);     //对齐位置
+    //添加点击复选框切换主题回调函数
+    lv_obj_add_event_cb(login_check_box1, login_change_theme_checkbox_cb, LV_EVENT_VALUE_CHANGED, NULL);    //添加选取回调函数
+    
+    login_check_box2 = tools_create_login_checkbox(full_screen_o, -1, -1, "默认主题"); //复选框2
+    lv_obj_align_to(login_check_box2, login_check_box1, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 2);    //对齐到第一个复选框
+    //添加点击复选框切换主题回调函数
+    lv_obj_add_event_cb(login_check_box2, login_change_theme_checkbox_cb, LV_EVENT_VALUE_CHANGED, NULL);    //添加选取回调函数
+}
+
+void login_screen(){        //主登录界面
+
+     //创建登录屏幕
+    if(!login_screen_o){   //避免重复申请内存
+        login_screen_o = lv_obj_create(NULL);  
+    }
+    //设置尺寸
+    lv_obj_set_size(login_screen_o,800,480);
      //添加键盘
-    tools_create_pinyin_ime(login_screen_page_o, 500, 200);   //屏幕上添加键盘,默认隐藏
+    login_cn_kb_pair =  tools_create_pinyin_ime(login_screen_o, 500, 200);   //屏幕上添加键盘,默认隐藏
     //添加隐键盘回调函数
-    lv_obj_add_event_cb(login_screen_page_o, hidden_kb_cb, LV_EVENT_CLICKED, NULL);   
+    lv_obj_add_event_cb(login_screen_o, hidden_kb_cb, LV_EVENT_CLICKED, NULL); //点击对象隐藏键盘
 
-    def_text_style = (lv_style_t * )malloc(sizeof(lv_style_t)); //申请字体style
-    if(def_text_style != NULL){
-        tools_create_font_style(def_text_style,"/fonts/MSYH.TTC", 20);   //设置提示字体
-    }
-    else{
-        perror("内存申请失败");
-    }
+    //添加主题切换复选框
+    add_switch_full_screen_theme_checkbox(login_screen_o);
+    //加载默认主题
+    load_def_login_theme(login_screen_o, def_login_theme_path);
 
-    login_window(); //显示登录框
+    //加载登录窗口
+    login_window(); 
+    //加载新屏幕动画
+    lv_scr_load(login_screen_o);
+
 }
 
 
@@ -69,10 +142,19 @@ void login_window(){    //登录界面
     //添加小窗
     if(!login_window_o){    //避免内存溢出
 
-        login_window_o = lv_obj_create(login_screen_page_o);
+        login_window_o = lv_obj_create(login_screen_o);
     }
+    //设置小窗大小和对齐
     lv_obj_set_size(login_window_o, 300, 200);
-    lv_obj_align(login_window_o,LV_ALIGN_TOP_MID,0, -10); //设置对齐
+    lv_obj_align(login_window_o,LV_ALIGN_TOP_MID,0, 0); //设置对齐
+    if(!login_window_opa_style){ //登录窗口的透明度主题
+        login_window_opa_style = (lv_style_t *)malloc(sizeof(lv_style_t));
+    }
+    if(login_window_opa_style){  //设置样式
+        lv_style_init(login_window_opa_style);   //必须初始化
+        lv_style_set_bg_opa(login_window_opa_style, LV_OPA_50);
+        lv_obj_add_style(login_window_o, login_window_opa_style, 0);
+    }
 
     //用户名输入框
     user_ta = tools_create_login_ta(login_window_o, 200, 40, "输入用户名");
@@ -87,13 +169,13 @@ void login_window(){    //登录界面
     lv_textarea_set_password_mode(psw_ta, true); //密码输入使用*代替,开启密码模式
     lv_obj_add_event_cb(psw_ta, ta_kb_associate_cb,LV_EVENT_FOCUSED,NULL);   //添加输入框回调函数
     
- 
     //添加登录按钮
     login_bt = lv_btn_create(login_window_o);   
     // 设置按钮的坐标位置和大小-->设置某个属性
     lv_obj_set_size(login_bt, 80, 40);
     lv_obj_align_to(login_bt,psw_ta,LV_ALIGN_OUT_BOTTOM_LEFT,0,4);
-    lv_obj_add_event_cb(login_bt, login_btn_cb, LV_EVENT_CLICKED, NULL);   //添加按钮点击回调函数
+    //添加按钮点击回调函数
+    lv_obj_add_event_cb(login_bt, login_btn_cb, LV_EVENT_CLICKED, NULL);   
 
     //给按钮添加标签
     lv_obj_t * login_bt_lb = tools_create_login_bt_lb(login_bt, "登录");
@@ -103,11 +185,14 @@ void login_window(){    //登录界面
     // 设置按钮的坐标位置和大小-->设置某个属性
     lv_obj_set_size(logup_bt, 80, 40);
     lv_obj_align_to(logup_bt,psw_ta,LV_ALIGN_OUT_BOTTOM_RIGHT,0,4); //对齐到登录按钮
-    lv_obj_add_event_cb(logup_bt, logup_btn_cb, LV_EVENT_CLICKED, NULL);   //添加按钮点击回调函数
+    //添加按钮点击回调函数
+    lv_obj_add_event_cb(logup_bt, logup_btn_cb, LV_EVENT_CLICKED, NULL);   
 
     //给按钮添加标签
     lv_obj_t * logup_bt_lb = tools_create_login_bt_lb(logup_bt, "注册"); // 按钮作为标签的父窗口,等一会标签就会嵌套到按钮上
-
+    
+    //设置动画
+    //lv_obj_fade_in(login_screen_o, 800, 0);
 }
 
 void logup_btn_cb(lv_event_t * e){  //注册回调函数
@@ -115,7 +200,7 @@ void logup_btn_cb(lv_event_t * e){  //注册回调函数
 
 }
 void logup_window(){    //注册界面
-    //删除按钮
+    //删除登录和注册按钮
     if(login_bt && logup_bt){   
         lv_obj_del(login_bt);
         login_bt = NULL;
@@ -160,17 +245,18 @@ void logup_window(){    //注册界面
 
     //给按钮添加标签
     lv_obj_t * bk_logup_bt_lb = tools_create_login_bt_lb(bk_logup_bt, "返回"); // 按钮作为标签的父窗口,等一会标签就会嵌套到按钮上
-
+    //设置动画
+    //lv_obj_fade_in(login_screen_o, 800, 0);
 }
 
-
+//点击提交注册按钮回调函数
 void sm_logup_btn_cb(lv_event_t * e){  //注册提交按钮点击回调服务
     user_register("/IOT/projects/26-1-30/user_info.txt");
     if(user_ta && psw_ta && cf_psw_ta){
         char *logup_name=lv_textarea_get_text(user_ta);
         char *logup_passwd=lv_textarea_get_text(psw_ta);
         char *logup_cf_passwd=lv_textarea_get_text(cf_psw_ta);
-        if(strcmp(logup_passwd, logup_cf_passwd) == 0){
+        if(1 || strcmp(logup_passwd, logup_cf_passwd) == 0){
             //注册成功，返回登陆界面
             lv_obj_del(login_window_o); // 删除登录窗口，重新注册登录窗口
             login_window_o = NULL;

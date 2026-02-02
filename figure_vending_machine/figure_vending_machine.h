@@ -9,5 +9,5 @@
 /*贩卖机主控制程序
 */
 int figure_vending_machine();
-
+void init_base_widgets();
 #endif

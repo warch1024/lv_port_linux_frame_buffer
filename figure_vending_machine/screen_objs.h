@@ -29,13 +29,22 @@
 #include<dirent.h>
 
 
-extern lv_obj_t 
-    * login_screen_page_o,
-    * login_window_o, 
-    * main_screen_page_o,
-    * logup_window_o;
+extern lv_obj_t                //管理所有屏幕
+    * login_screen_o,   //登录界面
+    * main_screen_o;   //主界面
 
-extern lv_style_t * def_text_style;
+extern lv_style_t * def_text_style; //默认提示文字的style
+
+//对象键值对node
+typedef struct Lv_obj_pn{       //存储lv对象
+    char name[50]; //对象名
+    lv_obj_t * obj; //对象地址
+    struct Lv_obj_pn * prev;
+    struct Lv_obj_pn * next;
+    struct Lv_obj_pn * tail;
+}lv_obj_pn;
+
+
 /*贩卖机主控制程序
 */
 int figure_vending_machine();

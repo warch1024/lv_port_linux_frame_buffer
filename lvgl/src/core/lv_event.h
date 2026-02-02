@@ -92,15 +92,15 @@ typedef enum {
 } lv_event_code_t;
 
 typedef struct _lv_event_t {
-    struct _lv_obj_t * target;
-    struct _lv_obj_t * current_target;
-    lv_event_code_t code;
-    void * user_data;
-    void * param;
-    struct _lv_event_t * prev;
-    uint8_t deleted : 1;
-    uint8_t stop_processing : 1;
-    uint8_t stop_bubbling : 1;
+    struct _lv_obj_t * target;  // 事件最初的目标对象，即触发事件的原始对象
+    struct _lv_obj_t * current_target;  // 当前处理事件的对象，在事件冒泡过程中会变化
+    lv_event_code_t code;   // 事件类型代码，如点击、释放、值改变等
+    void * user_data;   // 用户自定义数据，注册事件回调时传入的数据
+    void * param;   // 事件参数，特定事件可能携带的附加信息
+    struct _lv_event_t * prev;  // 指向前一个事件的指针，用于事件链表
+    uint8_t deleted : 1;    // 标记位，表示事件是否已被标记为删除
+    uint8_t stop_processing : 1;    // 标记位，表示是否停止处理当前事件
+    uint8_t stop_bubbling : 1;   // 标记位，表示是否阻止事件向上冒泡
 } lv_event_t;
 
 /**
