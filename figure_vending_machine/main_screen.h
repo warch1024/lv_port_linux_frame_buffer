@@ -30,7 +30,5 @@ void main_screen();
 */
 item_card_ros create_main_screen_item_card(lv_obj_t * parent_o, char * item_title_text, int price, char * bg_pic_path);
 
-void create_main_screen_k_item_card(
-    lv_obj_t * parent_o, int num, char (* items_title_text)[40], int price[], char * bg_pic_path);
-
+tools_dll_t* add_page_k_item_card(lv_obj_t * parent_o, tools_dll_t * listed_goods);
 #endif

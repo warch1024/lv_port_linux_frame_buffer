@@ -13,6 +13,15 @@ typedef struct CN_kb_cp_ros{
     lv_obj_t * cn_kb_cp;
 }cn_kb_cp_ros;
 
+//通用双向带尾节点指针链表结构
+typedef struct Tools_dll_t{
+    void * data;
+    uint32_t num;
+    struct Tools_dll_t * next;
+    struct Tools_dll_t * prev;
+    struct Tools_dll_t * tail;
+}tools_dll_t;
+
 /*创建字体样式函数
 参数：
     style：样式指针
@@ -96,4 +105,41 @@ void tools_set_opa_style(lv_style_t * opa_style, lv_obj_t * obj, lv_opa_t opa_va
 */
 void tools_set_bg_style(lv_style_t * bg_style, lv_obj_t * obj, lv_opa_t opa_value, char * fig_path);
 
+/*链表初始化
+* @brief 初始化链表头节点
+* @return 返回头节点指针
+*/
+tools_dll_t *tools_init_dll_list();
+
+/*链表添加节点
+* @brief 添加节点
+* @param list 链表头节点指针
+* @param data 节点数据
+* @return 返回链表
+*/
+tools_dll_t * tools_add_dll_list_node(tools_dll_t * dll_list, void* data);
+
+/*链表删除节点
+* @brief 删除节点
+* @param list 链表头节点指针
+* @param data 数据域
+* @return 链表头节点指针
+*/
+tools_dll_t *tools_delete_dll_list_node(tools_dll_t * dll_list, void * data);
+
+/*链表查找节点
+* @brief 查找节点
+* @param list 链表头节点指针
+* @param data 数据域
+* @return 数据所在节点指针
+*/
+tools_dll_t * tools_find_dll_list_node(tools_dll_t *dll_list, void * data);
+
+/*链表修改
+* @brief 遍历链表
+* @param list 链表头节点指针
+* @param old_data 旧数据域
+* @param new_data 新数据域
+*/
+int tools_modify_dll_list_node(tools_dll_t * dll_list, void * old_data, void * new_data);
 #endif
