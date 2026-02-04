@@ -19,7 +19,9 @@ MAINSRC = \
 	figure_vending_machine/main_screen.c \
 	figure_vending_machine/screen_objs.c \
 	figure_vending_machine/user_info_mangm.c \
-	tools/tools.c 
+	tools/tools.c \
+	figure_vending_machine/checkout.c \
+	figure_vending_machine/goods_mangm.c
 
 
 include $(LVGL_DIR)/lvgl/lvgl.mk

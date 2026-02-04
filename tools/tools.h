@@ -8,10 +8,10 @@
 
 //extern lv_obj_t * tools_cn_kb, *tools_cand_pannel;
 
-typedef struct CN_kb_cp_pair{
+typedef struct CN_kb_cp_ros{
     lv_obj_t * cn_kb;
     lv_obj_t * cn_kb_cp;
-}cn_kb_cp_pair;
+}cn_kb_cp_ros;
 
 /*创建字体样式函数
 参数：
@@ -35,7 +35,7 @@ void tools_create_font_style(lv_style_t *style, char* font_path, int font_size);
     weight:键盘宽度
     height: 键盘高度
 */
-cn_kb_cp_pair tools_create_pinyin_ime(lv_obj_t * parent_obj, int weight, int height);
+cn_kb_cp_ros tools_create_pinyin_ime(lv_obj_t * parent_obj, int weight, int height);
 
 /*显示拼音键盘
 参数：

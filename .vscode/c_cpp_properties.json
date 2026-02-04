@@ -1,6 +1,34 @@
 {
     "configurations": [
         {
+            "name": "Win32",
+            "includePath": [
+                "e:/yueqian_projects/LVGL/lv_port_linux_frame_buffer/**",
+                "D:/ProgramFiles/cygwin64/lib/**",
+                "D:/ProgramFiles/cygwin64/usr/**",
+                "D:/ProgramFiles/msys2/ucrt64/lib/**",
+                "D:/ProgramFiles/msys2/ucrt64/include/**",
+                "D:/ProgramFiles/msys2/usr/include/**",
+                "D:/ProgramFiles/msys2/usr/lib/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "windowsSdkVersion": "10.0.22621.0",
+            "cStandard": "c11",
+            "cppStandard": "c++20",
+            "intelliSenseMode": "linux-gcc-x64",
+            "compilerPath": "D:/ProgramFiles/cygwin64/bin/gcc.exe",
+            "compilerPathInCppPropertiesJson": "D:/ProgramFiles/cygwin64/bin/gcc.exe",
+            "mergeConfigurations": false,
+            "recursiveIncludes": {},
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true
+            }
+        },
+        {
             "name": "arm-linux",
             "includePath": [
                 "${workspaceFolder}/**"

@@ -2,8 +2,6 @@
 #include"figure_vending_machine/figure_vending_machine.h"
 
 
-
-
 int figure_vending_machine(){
     init_base_widgets();        //初始化中文字体支持
     login_screen(); //显示登陆界面

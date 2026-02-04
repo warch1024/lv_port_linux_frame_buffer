@@ -45,7 +45,7 @@ static lv_obj_t * add_pinyin_plugin(lv_obj_t * kb, lv_obj_t * parent_obj, int kb
     */
     return cand_pannel;   // 返回候选栏
 }
-cn_kb_cp_pair tools_create_pinyin_ime(lv_obj_t * parent_obj, int weight, int height){ //将键盘放在obj上
+cn_kb_cp_ros tools_create_pinyin_ime(lv_obj_t * parent_obj, int weight, int height){ //将键盘放在obj上
     lv_obj_t * cn_kb = lv_keyboard_create(parent_obj);                                // 屏幕上添加键盘
     lv_obj_set_size(cn_kb, weight, height);
     lv_obj_set_pos(cn_kb, 0, 0); // 位置放在0,0否则偏移很大
@@ -56,7 +56,7 @@ cn_kb_cp_pair tools_create_pinyin_ime(lv_obj_t * parent_obj, int weight, int hei
 
         tools_hidden_pinyin_kb(cn_kb, cn_kb_cp);
     }
-    cn_kb_cp_pair pair = {.cn_kb = cn_kb, .cn_kb_cp = cn_kb_cp};
+    cn_kb_cp_ros pair = {.cn_kb = cn_kb, .cn_kb_cp = cn_kb_cp};
     return pair;
 }
 
@@ -143,3 +143,7 @@ void tools_set_bg_style(lv_style_t * bg_style, lv_obj_t * obj, lv_opa_t opa_valu
         lv_obj_add_style(obj, bg_style, 0);
     }
 }
+
+
+
+

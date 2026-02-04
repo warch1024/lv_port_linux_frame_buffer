@@ -1,148 +1,85 @@
 
 #include"figure_vending_machine/main_screen.h"
 
-static lv_style_t * main_screen_item_bg_style = NULL;
+#define ONE_PAGE_ITERMS_NUM 4
 
-static lv_obj_t * item1_window = NULL,
-    * item2_window = NULL,
-    * item3_window = NULL,
-    * item4_window = NULL;
+static item_card_ros one_screen_item_card[ONE_PAGE_ITERMS_NUM];
 
-static int items_price[4] = {100, 0, 0, 0};
-static lv_obj_t * myspinbox;
-
-
-static void lv_spinbox_increment_event_cb(lv_event_t * e)
+static void item_sb_increment_event_cb(lv_event_t * e)  //直接传入要调节的滚轮的对象地址
 {
     lv_event_code_t code = lv_event_get_code(e);
     if(code == LV_EVENT_SHORT_CLICKED || code  == LV_EVENT_LONG_PRESSED_REPEAT) {
-        lv_spinbox_increment(myspinbox);
+        lv_spinbox_increment((lv_obj_t *)e->user_data);
     }
 }
 
-static void lv_spinbox_decrement_event_cb(lv_event_t * e)
+static void item_sb_decrement_event_cb(lv_event_t * e)
 {
     lv_event_code_t code = lv_event_get_code(e);
     if(code == LV_EVENT_SHORT_CLICKED || code == LV_EVENT_LONG_PRESSED_REPEAT) {
-        lv_spinbox_decrement(myspinbox);
+        lv_spinbox_decrement((lv_obj_t *)e->user_data);
     }
 }
 
+
 void main_screen()
 {
-    
+    //初始化全局listed_list
+    init_def_goods_to_list();
     //创建主窗口
     main_screen_o=lv_obj_create(NULL);
     //设置大小
     lv_obj_set_size(main_screen_o,800,480);
+    //创建商品展示页面1，商品显示在此窗口上
+    lv_obj_t * main_screen_page1_o=lv_obj_create(main_screen_o);
+    //设置商品展示页面1大小
+    lv_obj_set_size(main_screen_page1_o,800,480);
+
     //加载主界面删除旧窗口
-    lv_scr_load_anim(main_screen_o, LV_SCR_LOAD_ANIM_MOVE_LEFT, 300, 0, true);
+    lv_scr_load_anim(main_screen_o, LV_SCR_LOAD_ANIM_MOVE_LEFT, 500, 0, true);
 
      //创建标签
     lv_obj_t *main_screen_title=lv_label_create(main_screen_o);
     lv_obj_set_align(main_screen_title,LV_ALIGN_TOP_MID);
     //标签设置文字
-    lv_obj_add_style(main_screen_title,def_text_style,0);
     lv_label_set_text(main_screen_title,"2233扭蛋自主贩卖机");
+    lv_obj_add_style(main_screen_title,def_text_style,0);
 
-    //新建4个小窗
-    item1_window = lv_obj_create(main_screen_o);
-    item2_window = lv_obj_create(main_screen_o);
-    item3_window = lv_obj_create(main_screen_o);
-    item4_window = lv_obj_create(main_screen_o);
-        
-    //设置窗口大小
-    lv_obj_set_size(item1_window,200,300);
-    lv_obj_set_size(item2_window,200,300);
-    lv_obj_set_size(item3_window,200,300);
-    lv_obj_set_size(item4_window,200,300);
+    //
+    //int num = 4;
+    char items_title[][40] = {"2", "22", "223", "2233"};
+    int items_prices[ONE_PAGE_ITERMS_NUM] = {10,21,33,22};
+    //图片的地址必须使用内存申请
+    char * items_bg_pic_path = (char*)(malloc(ONE_PAGE_ITERMS_NUM * 100));
+    strcpy(items_bg_pic_path, "S:/IOT/projects/26-1-30/resources/item1.jpg\0");
+    strcpy(items_bg_pic_path + 1*100, "S:/IOT/projects/26-1-30/resources/item2.jpg\0");
+    strcpy(items_bg_pic_path + 2*100, "S:/IOT/projects/26-1-30/resources/item3.jpg\0");
+    strcpy(items_bg_pic_path + 3*100, "S:/IOT/projects/26-1-30/resources/item1.jpg\0");
 
-    //对齐窗口
-    lv_obj_align_to(item1_window, main_screen_o, LV_ALIGN_TOP_LEFT, 0, 40);
-    lv_obj_align_to(item2_window, item1_window, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
-    lv_obj_align_to(item3_window, item2_window, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
-    lv_obj_align_to(item4_window, item3_window, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
-
-    //直接设置每个对象的样式
-    lv_obj_set_style_bg_img_src(item1_window, "S:/IOT/projects/26-1-30/resources/item1.jpg", 0);
-    lv_obj_set_style_bg_img_src(item2_window, "S:/IOT/projects/26-1-30/resources/item2.jpg", 0);
-    lv_obj_set_style_bg_img_src(item3_window, "S:/IOT/projects/26-1-30/resources/item3.jpg", 0);
-    lv_obj_set_style_bg_img_src(item4_window, "S:/IOT/projects/26-1-30/resources/item1.jpg", 0);
-
-    // 按钮作为标签的父窗口,等一会标签就会嵌套到按钮上
-    lv_obj_t * item1_btn_lb = lv_label_create(item1_window); 
-    lv_obj_align_to(item1_btn_lb, item1_window, LV_ALIGN_TOP_MID, 0, 0);   //对齐
-
-    // 给标签设置文字内容
-    lv_label_set_text(item1_btn_lb, "2233");   //给标签添加文字
-    lv_style_set_text_color(def_text_style, lv_color_make(0x00, 0x00, 0x00));  // 设置为红色
-    lv_obj_add_style(item1_btn_lb, def_text_style, 0);   //标签支持中文
+    //将商品添加到页面1上
+    create_main_screen_k_item_card(main_screen_page1_o, ONE_PAGE_ITERMS_NUM, items_title,items_prices, items_bg_pic_path);
     
-    //设置滚轮
-    myspinbox = lv_spinbox_create(item1_window);
-    lv_spinbox_set_range(myspinbox, 0, 99999);           // 设置范围
-    lv_spinbox_set_digit_format(myspinbox, 5, 0);    // 5位数字，0位小数
-    
-    lv_spinbox_set_cursor_pos(myspinbox, 0);         // 设置选中个位（最低位）
-    
-    lv_spinbox_set_value(myspinbox, 0);              // 初始值为0
-    
-    lv_obj_set_width(myspinbox, 65);
-    lv_obj_align_to(myspinbox, item1_window, LV_ALIGN_BOTTOM_MID, 0, 5);
-
-    lv_coord_t h = lv_obj_get_height(myspinbox);
-
-    lv_obj_t * btn = lv_btn_create(item1_window);
-    lv_obj_set_size(btn, h, h);
-    lv_obj_align_to(btn, myspinbox, LV_ALIGN_OUT_RIGHT_MID, 2, 0);
-    lv_obj_set_style_bg_img_src(btn, LV_SYMBOL_PLUS, 0);
-    lv_obj_add_event_cb(btn, lv_spinbox_increment_event_cb, LV_EVENT_ALL,  NULL);
-
-    btn = lv_btn_create(item1_window);
-    lv_obj_set_size(btn, h, h);
-    lv_obj_align_to(btn, myspinbox, LV_ALIGN_OUT_LEFT_MID, -2, 0);
-    lv_obj_set_style_bg_img_src(btn, LV_SYMBOL_MINUS, 0);
-    lv_obj_add_event_cb(btn, lv_spinbox_decrement_event_cb, LV_EVENT_ALL, NULL);
-    //价签
-    lv_obj_t *item_price_title_lb=lv_label_create(main_screen_o);
-    lv_obj_align_to(item_price_title_lb, item1_window, LV_ALIGN_OUT_BOTTOM_LEFT, 20, 2);
-
-    //标签设置文字
-    char item_price_str[50] = {0};   //转换价格数字到文本
-    sprintf(item_price_str,"售价: %d CNY", items_price[0]);
-    lv_label_set_text(item_price_title_lb, item_price_str);
-    lv_obj_add_style(item_price_title_lb, def_text_style,0);
-    //价格
-
-
+    //添加购物车相关
+    shopping_cart(main_screen_o);
 }
 
 
-
-
-
-
-
-
-void create_main_screen_item(lv_obj_t * parent_o, char * item_title, int price, char * bg_pic_path){
-
+item_card_ros create_main_screen_item_card(lv_obj_t * parent_o, char * item_title_text, int price, char * bg_pic_path){
+    
     //goods title
     lv_obj_t * item_window = lv_obj_create(parent_o);
         
     //set window size
-    lv_obj_set_size(item_window,200,300);   //固定尺寸
-
-    // //对齐窗口
-    // lv_obj_align_to(item_window, main_screen_o, LV_ALIGN_TOP_LEFT, 0, 40);
+    lv_obj_set_size(item_window, 200, 300);   //固定尺寸
 
     //直接设置每个对象的样式
-    lv_obj_set_style_bg_img_src(item_window, bg_pic_path, 0);
+    lv_obj_set_style_bg_img_src(item_window, bg_pic_path, 0);   //设置背景图片
 
     // 设置商品标签
     lv_obj_t * item_title_lb = lv_label_create(item_window);
     lv_obj_align_to(item_title_lb, item_window, LV_ALIGN_TOP_MID, 0, 0);   //对齐
     // 给标签设置文字内容
-    lv_label_set_text(item_title_lb, "二二三三");   //给标签添加文字
+    lv_label_set_text(item_title_lb, item_title_text);   //给标签添加文字
     lv_style_set_text_color(def_text_style, lv_color_make(0x00, 0x00, 0x00));  // 全局共享样式
     lv_obj_add_style(item_title_lb, def_text_style, 0);   //标签支持中文
     
@@ -155,31 +92,85 @@ void create_main_screen_item(lv_obj_t * parent_o, char * item_title, int price, 
     
     lv_spinbox_set_value(item_spinbox, 0);              // 初始值为0
     
-    lv_obj_set_width(item_spinbox, 65);
-    lv_obj_align_to(item_spinbox, item_window, LV_ALIGN_BOTTOM_MID, 0, 5);
+    lv_obj_set_width(item_spinbox, 65); //宽度
+    lv_obj_align_to(item_spinbox, item_window, LV_ALIGN_BOTTOM_MID, 0, 0);  //对齐
 
-    lv_coord_t h = lv_obj_get_height(item_spinbox);
+    lv_coord_t sb_h = lv_obj_get_height(item_spinbox); //获取滚轮高度
 
-    lv_obj_t * btn = lv_btn_create(item_window);
-    lv_obj_set_size(btn, h, h);
-    lv_obj_align_to(btn, myspinbox, LV_ALIGN_OUT_RIGHT_MID, 2, 0);
-    lv_obj_set_style_bg_img_src(btn, LV_SYMBOL_PLUS, 0);
-    lv_obj_add_event_cb(btn, lv_spinbox_increment_event_cb, LV_EVENT_ALL,  NULL);
+    lv_obj_t * mp_btn = lv_btn_create(item_window); //两边的按钮
+    lv_obj_set_size(mp_btn, sb_h, sb_h);
+    lv_obj_align_to(mp_btn, item_spinbox, LV_ALIGN_OUT_RIGHT_MID, 2, 0);
+    lv_obj_set_style_bg_img_src(mp_btn, LV_SYMBOL_PLUS, 0);
+    //传入滚轮的地址
+    lv_obj_add_event_cb(mp_btn, item_sb_increment_event_cb, LV_EVENT_ALL,  item_spinbox);
 
-    btn = lv_btn_create(item_window);
-    lv_obj_set_size(btn, h, h);
-    lv_obj_align_to(btn, myspinbox, LV_ALIGN_OUT_LEFT_MID, -2, 0);
-    lv_obj_set_style_bg_img_src(btn, LV_SYMBOL_MINUS, 0);
-    lv_obj_add_event_cb(btn, lv_spinbox_decrement_event_cb, LV_EVENT_ALL, NULL);
-    //价签
-    lv_obj_t *item_price_title_lb=lv_label_create(main_screen_o);
-    lv_obj_align_to(item_price_title_lb, item_window, LV_ALIGN_OUT_BOTTOM_LEFT, 20, 2);
+    mp_btn = lv_btn_create(item_window);    //复用按钮
+    lv_obj_set_size(mp_btn, sb_h, sb_h);    //设置尺寸
+    lv_obj_align_to(mp_btn, item_spinbox, LV_ALIGN_OUT_LEFT_MID, -2, 0);    //对齐到右侧
+    lv_obj_set_style_bg_img_src(mp_btn, LV_SYMBOL_MINUS, 0);    //设置背景
+    //添加回调函数，传入滚轮地址
+    lv_obj_add_event_cb(mp_btn, item_sb_decrement_event_cb, LV_EVENT_ALL, item_spinbox);
+    //添加价格标签
+    lv_obj_t *item_price_title_lb=lv_label_create(parent_o);    //价格标签放在屏幕上
+    
 
     //标签设置文字
     char item_price_str[50] = {0};   //转换价格数字到文本
-    sprintf(item_price_str,"售价: %d CNY", items_price[0]);
-    lv_label_set_text(item_price_title_lb, item_price_str);
-    lv_obj_add_style(item_price_title_lb, def_text_style,0);
-    //价格
+    sprintf(item_price_str,"售价: %d CNY", price);
+    lv_label_set_text(item_price_title_lb, item_price_str); //设置文字
+    lv_obj_add_style(item_price_title_lb, def_text_style,0);    //添加样式支持
 
+
+    //lv_obj_set_style_bg_img_src(item_window, bg_pic_path, 0);   //设置背景图片
+    //返回值
+    item_card_ros ret_val = {.item_window   = item_window,
+                             .item_title_lb = item_title_lb,
+                             .item_sb       = item_spinbox,
+                             .iten_price_lb = item_price_title_lb};
+    return ret_val;
+}
+//一个屏幕创建n个相同样式卡片
+void create_main_screen_k_item_card(
+    lv_obj_t * parent_o, int num, char (* items_title_text)[40], int price[], char * bg_pic_path){
+
+    // item_card_ros one_screen_item_card[num];
+    //创建4个卡片
+    for(int i=0; i<num; i++){
+        one_screen_item_card[i] =
+        create_main_screen_item_card(parent_o, items_title_text[i], price[i], (bg_pic_path + i*100));
+    }
+
+    //卡片窗口对齐
+    lv_obj_align_to(one_screen_item_card[0].item_window, parent_o, LV_ALIGN_TOP_LEFT, 0, 40);   //第一张卡片单独对齐
+    for(int i=1; i< num; i++){
+
+        lv_obj_align_to(one_screen_item_card[i].item_window, one_screen_item_card[i-1].item_window, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
+    }
+    //价签对齐窗口
+    for(int i=0; i< num; i++){
+
+        lv_obj_align_to(one_screen_item_card[i].iten_price_lb, one_screen_item_card[i].item_window, LV_ALIGN_OUT_BOTTOM_LEFT, 20, 2);
+    }
+}
+
+//给一个page添加k个商品item
+void add_page_k_item_card(lv_obj_t * parent_o, int num, goods_info_t * listed_goods){
+
+    //创建k个卡片
+    for(int i=0; i<num; i++){
+        one_screen_item_card[i] =
+        create_main_screen_item_card(parent_o, items_title_text[i], price[i], (bg_pic_path + i*100));
+    }
+
+    //卡片窗口对齐
+    lv_obj_align_to(one_screen_item_card[0].item_window, parent_o, LV_ALIGN_TOP_LEFT, 0, 40);   //第一张卡片单独对齐
+    for(int i=1; i< num; i++){
+
+        lv_obj_align_to(one_screen_item_card[i].item_window, one_screen_item_card[i-1].item_window, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
+    }
+    //价签对齐窗口
+    for(int i=0; i< num; i++){
+
+        lv_obj_align_to(one_screen_item_card[i].iten_price_lb, one_screen_item_card[i].item_window, LV_ALIGN_OUT_BOTTOM_LEFT, 20, 2);
+    }
 }

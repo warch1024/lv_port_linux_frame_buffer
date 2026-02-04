@@ -35,6 +35,8 @@ extern lv_obj_t                //管理所有屏幕
 
 extern lv_style_t * def_text_style; //默认提示文字的style
 
+
+
 //对象键值对node
 typedef struct Lv_obj_pn{       //存储lv对象
     char name[50]; //对象名
