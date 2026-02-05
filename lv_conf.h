@@ -621,7 +621,7 @@ extern uint32_t custom_tick_get(void);
 #define LV_USE_GIF 1
 
 /*QR code library*/
-#define LV_USE_QRCODE 0
+#define LV_USE_QRCODE 1 //使用二维码功能
 
 /*FreeType library*/
 #define LV_USE_FREETYPE 1   //启用freetype

@@ -8,7 +8,7 @@
 
 typedef struct Goods_info_t{    //商品信息结构
     char title[40];
-    uint64_t price;
+    uint32_t price;
     char goods_pic_path[100];
     uint32_t num;
 }goods_info_t;

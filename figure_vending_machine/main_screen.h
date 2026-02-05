@@ -18,7 +18,7 @@ typedef struct Item_card_ros{
 }item_card_ros;
 
 
-
+const char* get_goods_card_title(lv_obj_t* item_spinbox);
 
 void main_screen();
 /* 创建商品卡片 

@@ -61,9 +61,11 @@ goods_info_t *delete_listed_goods_list(tools_dll_t *listed_goods_list, goods_inf
 
 //查找商品返回商品对象地址
 goods_info_t * find_listed_goods_list(tools_dll_t *listed_goods_list, char * goods_name){
+    
     for(tools_dll_t * tmp_node = listed_goods_list->next; tmp_node != NULL; tmp_node = tmp_node->next){
 
         if(strcmp(((goods_info_t *)(tmp_node->data))->title, goods_name) == 0){ 
+        
             return (goods_info_t *)(tmp_node->data);    //找到返回商品信息节点
         }
     }

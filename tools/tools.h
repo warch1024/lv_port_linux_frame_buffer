@@ -125,7 +125,7 @@ tools_dll_t * tools_add_dll_list_node(tools_dll_t * dll_list, void* data);
 * @param data 数据域
 * @return 链表头节点指针
 */
-tools_dll_t *tools_delete_dll_list_node(tools_dll_t * dll_list, void * data);
+tools_dll_t *tools_delete_dll_list_node(tools_dll_t * dll_list, tools_dll_t * node);
 
 /*链表查找节点
 * @brief 查找节点
@@ -142,4 +142,11 @@ tools_dll_t * tools_find_dll_list_node(tools_dll_t *dll_list, void * data);
 * @param new_data 新数据域
 */
 int tools_modify_dll_list_node(tools_dll_t * dll_list, void * old_data, void * new_data);
+
+/*根据同级对象和用户标签查找并返回同级对象
+* @parram peer_obj 同级对象
+* @param user_label 用户标签
+*/
+lv_obj_t* tools_get_peer_obj_via_user_label(lv_obj_t* peer_obj, void * user_label);
+
 #endif

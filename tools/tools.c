@@ -147,6 +147,7 @@ void tools_set_bg_style(lv_style_t * bg_style, lv_obj_t * obj, lv_opa_t opa_valu
 ///////////////双向带尾节点指针链表
 //初始化头节点
 tools_dll_t *tools_init_dll_list(){ 
+  
     tools_dll_t *head = (tools_dll_t*)malloc(sizeof(tools_dll_t));
     if(head){
         //初始化数据与
@@ -179,11 +180,11 @@ tools_dll_t * tools_add_dll_list_node(tools_dll_t * dll_list, void* data){
     return dll_list;
 }
 
-//删除data所在节点
-tools_dll_t *tools_delete_dll_list_node(tools_dll_t * dll_list, void * data){
+//删除node节点
+tools_dll_t *tools_delete_dll_list_node(tools_dll_t * dll_list, tools_dll_t * node){
     if(dll_list && dll_list->next != NULL){    //确保不是空指针,和链表非空
         for(tools_dll_t * tmp_node = dll_list->next; tmp_node != NULL; tmp_node = tmp_node->next){
-            if(tmp_node->data == data){   //找到节点
+            if(tmp_node == node){   //找到节点
                 tmp_node->prev->next = tmp_node->next;  //调整上一个节点的next
                 if(tmp_node == dll_list->tail){  //待删节点是尾节点
                     dll_list->tail = tmp_node->prev; //调整尾节点
@@ -192,9 +193,9 @@ tools_dll_t *tools_delete_dll_list_node(tools_dll_t * dll_list, void * data){
                     tmp_node->next->prev = tmp_node->prev;
                 }
                 //调整完成
-                if(tmp_node->data){
-                    free(tmp_node->data);   //释放数据域申请的内存
-                }
+                // if(tmp_node->data){
+                //     free(tmp_node->data);   //释放数据域申请的内存
+                // }
                 free(tmp_node);//释放节点
                 dll_list->num --;   //调整节点计数
                 return dll_list;    //返回链表
@@ -228,4 +229,16 @@ int tools_modify_dll_list_node(tools_dll_t * dll_list, void * old_data, void * n
 }
 
 
-
+lv_obj_t* tools_get_peer_obj_via_user_label(lv_obj_t* peer_obj, void * user_label){
+    lv_obj_t* item_window = lv_obj_get_parent(peer_obj);    //获取父对象
+    if(item_window == NULL) return NULL;
+    
+    for(int i = 0; i < lv_obj_get_child_cnt(item_window); i++) {
+        lv_obj_t* target_child = lv_obj_get_child(item_window, i);
+        if(lv_obj_get_user_data(target_child) == (void*)user_label){
+            
+            return target_child;    //返回目标子对象
+        }
+    }
+    return NULL;
+}

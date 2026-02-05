@@ -2,14 +2,42 @@
 #include"figure_vending_machine/main_screen.h"
 
 #define ONE_PAGE_ITERMS_NUM 4
-
+#define GOODS_ITEM_CARD_LB 65533    //设置商品卡片的标签对象的用户标识
 static item_card_ros one_screen_item_card[ONE_PAGE_ITERMS_NUM];
 
+
+const char* get_goods_card_title(lv_obj_t* item_spinbox){
+    lv_obj_t* item_window = lv_obj_get_parent(item_spinbox);    //获取父对象
+    if(item_window == NULL) return NULL;
+    
+    for(int i = 0; i < lv_obj_get_child_cnt(item_window); i++) {
+        lv_obj_t* child = lv_obj_get_child(item_window, i);
+        if(lv_obj_get_user_data(child) == (void*)GOODS_ITEM_CARD_LB){
+            
+            return lv_label_get_text(child);    //返回商品标题
+        }
+    }
+    return NULL;
+}
+//增加按钮回调
 static void item_sb_increment_event_cb(lv_event_t * e)  //直接传入要调节的滚轮的对象地址
 {
     lv_event_code_t code = lv_event_get_code(e);
     if(code == LV_EVENT_SHORT_CLICKED || code  == LV_EVENT_LONG_PRESSED_REPEAT) {
         lv_spinbox_increment((lv_obj_t *)e->user_data);
+        goods_info_t * goods =NULL;
+        //查找触发回调的按钮所在商品卡片的商品title，根据此title查找已上架列表，返回商品信息对象
+        char goods_title[40] = {0};
+        //获取卡片标签的文字
+        strcpy(goods_title,
+             lv_label_get_text(tools_get_peer_obj_via_user_label(e->user_data, (void*)GOODS_ITEM_CARD_LB)));
+        
+        //根据此title查找已上架列表，返回商品信息对象
+        if((goods = find_listed_goods_list(listed_goods, goods_title)) != NULL){
+
+            //将此商品加入加购列表
+            add_wish_list_goods(shopping_cart_added_list, goods);
+        }
     }
 }
 
@@ -18,14 +46,29 @@ static void item_sb_decrement_event_cb(lv_event_t * e)
     lv_event_code_t code = lv_event_get_code(e);
     if(code == LV_EVENT_SHORT_CLICKED || code == LV_EVENT_LONG_PRESSED_REPEAT) {
         lv_spinbox_decrement((lv_obj_t *)e->user_data);
+        goods_info_t * goods =NULL;
+        //查找触发回调的按钮所在商品卡片的商品title，根据此title查找已上架列表，返回商品信息对象
+        char goods_title[40] = {0};
+        //获取卡片标签的文字
+        strcpy(goods_title,
+             lv_label_get_text(tools_get_peer_obj_via_user_label(e->user_data, (void*)GOODS_ITEM_CARD_LB)));
+        
+        //根据此title查找已上架列表，返回商品信息对象
+        if((goods = find_listed_goods_list(listed_goods, goods_title)) != NULL){
+            //将此商品加入加购列表
+            minus_wish_list_goods(shopping_cart_added_list, goods);
+        }
     }
 }
 
 
-void main_screen()
-{
+void main_screen(){
+
     //初始化全局listed_list
     init_def_goods_to_list();
+    //初始化已加购列表
+    init_shopping_cart_added_list();
+
     //创建主窗口
     main_screen_o=lv_obj_create(NULL);
     //设置大小
@@ -47,10 +90,11 @@ void main_screen()
 
 
     //将商品添加到页面1上
-    
     tools_dll_t * tmp = add_page_k_item_card(main_screen_page1_o, listed_goods);
-    //添加购物车相关
-    shopping_cart(main_screen_o);
+    //添加购物车相关功能
+    lv_obj_t * shopping_cart_btn_lb = shopping_cart(main_screen_o);
+    //添加结算按钮相关功能
+    settlement(main_screen_o, shopping_cart_added_list);
 }
 
 
@@ -69,6 +113,9 @@ item_card_ros create_main_screen_item_card(lv_obj_t * parent_o, char * item_titl
 
     // 设置商品标签
     lv_obj_t * item_title_lb = lv_label_create(item_window);
+    //设置标签对象的用户标识，用于查找商品卡片的title
+    lv_obj_set_user_data(item_title_lb, (void*)GOODS_ITEM_CARD_LB); 
+    
     lv_obj_align_to(item_title_lb, item_window, LV_ALIGN_TOP_MID, 0, 0);   //对齐
     // 给标签设置文字内容
     lv_label_set_text(item_title_lb, item_title_text);   //给标签添加文字
@@ -78,14 +125,15 @@ item_card_ros create_main_screen_item_card(lv_obj_t * parent_o, char * item_titl
     //设置滚轮
     lv_obj_t * item_spinbox = lv_spinbox_create(item_window);
     lv_spinbox_set_range(item_spinbox, 0, 99999);           // 设置范围
-    lv_spinbox_set_digit_format(item_spinbox, 5, 0);    // 5位数字，0位小数
-    
+    lv_spinbox_set_digit_format(item_spinbox, 4, 0);    // 5位数字，0位小数
     lv_spinbox_set_cursor_pos(item_spinbox, 0);         // 设置选中个位（最低位）
-    
     lv_spinbox_set_value(item_spinbox, 0);              // 初始值为0
-    
     lv_obj_set_width(item_spinbox, 65); //宽度
     lv_obj_align_to(item_spinbox, item_window, LV_ALIGN_BOTTOM_MID, 0, 0);  //对齐
+    lv_obj_add_style(item_spinbox, def_text_style, 0);  //添加中文支持
+    //设置滚轮不能交互
+    lv_textarea_set_cursor_click_pos(item_spinbox, false);//禁止点击聚焦
+    // lv_obj_clear_flag(item_spinbox, LV_OBJ_FLAG_CLICKABLE); //不可点击
 
     lv_coord_t sb_h = lv_obj_get_height(item_spinbox); //获取滚轮高度
 
@@ -145,7 +193,7 @@ tools_dll_t* add_page_k_item_card(lv_obj_t * parent_o, tools_dll_t * listed_good
 
     //卡片窗口对齐
     lv_obj_align_to(((item_card_ros*)(page_k_item_card->next->data))->item_window,
-         parent_o, LV_ALIGN_TOP_LEFT, 0, 40);   //第一张卡片单独对齐
+         parent_o, LV_ALIGN_TOP_LEFT, 0, 30);   //第一张卡片单独对齐
     //其余循环对齐
     for(tools_dll_t * tmp_node = page_k_item_card->next->next; tmp_node != NULL; tmp_node = tmp_node->next){
         lv_obj_align_to(((item_card_ros*)(tmp_node->data))->item_window,
@@ -158,3 +206,4 @@ tools_dll_t* add_page_k_item_card(lv_obj_t * parent_o, tools_dll_t * listed_good
     }
     return page_k_item_card;
 }
+
