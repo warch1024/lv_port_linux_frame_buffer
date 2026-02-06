@@ -1,5 +1,8 @@
 #include "figure_vending_machine/login_screen.h"    
 
+
+#define USER_RECORD_FILE "/IOT/projects/26-1-30/user_info_recorder.txt"
+
 // #include"figure_vending_machine/screen_objs.h"
 //登录屏幕的所有组件
  static lv_obj_t * login_window_o = NULL,     //登录窗口
@@ -34,6 +37,11 @@ void ta_kb_associate_cb(lv_event_t * e){
     tools_ta_kb_associate(e->target, login_cn_kb_pair.cn_kb);
 }
 
+
+void verify_user(){
+
+}
+
 void login_btn_cb(lv_event_t *e){   //登录按钮回调函数
 //跳转界面
          //获取输入框输入的用户名和密码
@@ -41,11 +49,28 @@ void login_btn_cb(lv_event_t *e){   //登录按钮回调函数
     char *passwd=lv_textarea_get_text(psw_ta);
 
     //判断用户名和密码是否正确
-    if(1 || strcmp(name,"gec")==0 && strcmp(passwd,"123456")==0)
-    {
+    user_info_t user_info_tmp = {.user_name = {0}, .user_psw = {0}};
+    strcpy(user_info_tmp.user_name, name);
+    strcpy(user_info_tmp.user_psw, passwd);
+    //debug
+    printf("deng原%s\n%s\n",name, passwd);
+    printf("deng堆%s\n%s\n",user_info_tmp.user_name, user_info_tmp.user_psw);
+     printf("指针%p\n%p\n",&user_info_tmp, user_info_list);
+     //管理员登录
+     if(is_admin(&user_info_tmp)){
+        printf("###################管理员#################\n");
+        admin_management();
+     }
 
+    if(verify_user_name_psw(&user_info_tmp, user_info_list)){   //验证用户
+        //写入用户信息到文件
+        write_user_info_list_to_file(user_info_list, USER_RECORD_FILE);
         //跳到主界面
         main_screen();
+        
+    }
+    else{
+        printf("用户名或密码错误\n");
     }
 }
 void login_change_theme_checkbox_cb(lv_event_t * e){  //复选框点击回调函数
@@ -112,7 +137,8 @@ void add_switch_full_screen_theme_checkbox(lv_obj_t * full_screen_o){    //给�
 }
 
 void login_screen(){        //主登录界面
-
+    //初始化用户信息链表
+    init_user_info_list(USER_RECORD_FILE);
      //创建登录屏幕
     if(!login_screen_o){   //避免重复申请内存
         login_screen_o = lv_obj_create(NULL);  
@@ -247,16 +273,30 @@ void logup_window(){    //注册界面
 
 //点击提交注册按钮回调函数
 void sm_logup_btn_cb(lv_event_t * e){  //注册提交按钮点击回调服务
-    user_register("/IOT/projects/26-1-30/user_info.txt");
+    
     if(user_ta && psw_ta && cf_psw_ta){
+        //获取注册信息
         char *logup_name=lv_textarea_get_text(user_ta);
         char *logup_passwd=lv_textarea_get_text(psw_ta);
         char *logup_cf_passwd=lv_textarea_get_text(cf_psw_ta);
-        if(1 || strcmp(logup_passwd, logup_cf_passwd) == 0){
-            //注册成功，返回登陆界面
+        if(strcmp(logup_passwd, logup_cf_passwd) == 0){ //密码设置正确
+            user_info_t *user_info = (user_info_t *)malloc(sizeof(user_info_t));    //保存用户信息节点
+            strcpy(user_info->user_name, logup_name);
+            strcpy(user_info->user_psw, logup_passwd);
+            add_user_info_to_list(user_info_list, user_info);
+             //注册成功，返回登陆界面
             lv_obj_del(login_window_o); // 删除登录窗口，重新注册登录窗口
             login_window_o = NULL;
+            //debug
+            printf("zhu原%s\n%s\n",logup_name, logup_passwd);
+            printf("zhu堆%s\n%s\n",user_info->user_name, user_info->user_psw);
             login_window();
+        }
+        else{
+            printf("密码设置错误\n");
+            //lv_textarea_set_text(user_ta, "");
+            lv_textarea_set_text(psw_ta, "");
+            lv_textarea_set_text(cf_psw_ta, "");
         }
     }
 }
@@ -272,3 +312,26 @@ void bk_logup_btn_cb(lv_event_t * e){    //返回主界面
 void save_logup_info(){ //保存用户信息
     
 }
+
+
+void admin_management(){    //管理员管理程序
+    // 在主菜单或其他适当位置
+
+        //初始化全局listed_list
+    init_def_goods_to_list();
+    //初始化已加购列表
+    init_shopping_cart_added_list();
+    //创建标签
+    lv_obj_t *main_screen_admin_lb=lv_label_create(main_screen_o);
+    lv_obj_set_align(main_screen_admin_lb,LV_ALIGN_TOP_RIGHT);
+    //标签设置文字
+    lv_label_set_text(main_screen_admin_lb,"管理员");
+    lv_obj_add_style(main_screen_admin_lb, def_text_style, 1);
+    
+    // lv_obj_invalidate(login_screen_o); //刷新
+    // lv_obj_invalidate(main_screen_admin_lb); //刷新
+    show_goods_management_menu();   //显示管理面板
+
+    main_screen();  //重新初始化
+}
+

@@ -21,7 +21,8 @@ MAINSRC = \
 	figure_vending_machine/user_info_mangm.c \
 	tools/tools.c \
 	figure_vending_machine/checkout.c \
-	figure_vending_machine/goods_mangm.c
+	figure_vending_machine/goods_mangm.c\
+	figure_vending_machine/goods_mangm_con.c
 
 
 include $(LVGL_DIR)/lvgl/lvgl.mk

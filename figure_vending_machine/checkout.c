@@ -3,7 +3,10 @@
 //管理页面对象
 static lv_obj_t * shopping_cart_list = NULL,
     * shopping_cart_window = NULL,
-    * shopping_cart_btn_lb = NULL;
+    * shopping_cart_btn_lb = NULL,
+    * shopping_cart_btn = NULL,
+    * settlement_title_lb = NULL,
+    * settlement_qr_code = NULL;
 //购物车已加购列表
 tools_dll_t * shopping_cart_added_list = NULL;
 
@@ -12,7 +15,7 @@ uint32_t shopping_cart_num = 0;  //显示购物车商品数量
 //购物车主函数，返回标签对象
 lv_obj_t * shopping_cart(lv_obj_t * parent_o){
     //添加购物车按钮
-    lv_obj_t * shopping_cart_btn = lv_btn_create(parent_o);
+    shopping_cart_btn = lv_btn_create(parent_o);
     // 设置按钮的坐标位置和大小-->设置某个属性
     lv_obj_set_size(shopping_cart_btn, 150, 50);
     lv_obj_align_to(shopping_cart_btn, parent_o, LV_ALIGN_BOTTOM_LEFT, 20, -10);
@@ -79,14 +82,14 @@ void refresh_shopping_cart_list(tools_dll_t * added_list, lv_obj_t * shopping_ca
     if(added_list && shopping_cart_list_o) {                                       // 遍历链表添加到加购列表
         lv_obj_clean(shopping_cart_list_o); //先清空列表
         //添加总价显示按钮
-        uint64_t total_price = 0;   //购物车商品总价
-        for(tools_dll_t * tmp_node = added_list->next; tmp_node != NULL; tmp_node = tmp_node->next){
-            uint32_t num = ((wish_list_t*)(tmp_node->data))->num, 
-                price = ((wish_list_t*)(tmp_node->data))->goods->price;
-                total_price += num*price;
-        }
+        // uint64_t total_price = 0;   //购物车商品总价
+        // for(tools_dll_t * tmp_node = added_list->next; tmp_node != NULL; tmp_node = tmp_node->next){
+        //     uint32_t num = ((wish_list_t*)(tmp_node->data))->num, 
+        //         price = ((wish_list_t*)(tmp_node->data))->goods->price;
+        //         total_price += num*price;
+        // }
         char total_price_list_btn[50] = {0};
-        sprintf(total_price_list_btn, "——合计: %d元——",total_price);
+        sprintf(total_price_list_btn, "——合计: %d元——",caculate_added_total_price(added_list));
         lv_list_add_btn(shopping_cart_list_o, NULL, total_price_list_btn);
   
         //显示价签
@@ -203,26 +206,60 @@ void set_shopping_cart_btn_goods_counter(lv_obj_t * shopping_cart_btn_lb, uint32
     lv_obj_invalidate(lv_obj_get_parent(shopping_cart_btn_lb));//刷新按钮
 }
 
+//统计总价
+uint64_t caculate_added_total_price(tools_dll_t * added_list){    //计算总价
+    uint64_t total_price = 0;
+    for(tools_dll_t * tmp_node = added_list->next; tmp_node != NULL; tmp_node = tmp_node->next){
+            uint32_t num = ((wish_list_t*)(tmp_node->data))->num, 
+                price = ((wish_list_t*)(tmp_node->data))->goods->price;
+            total_price += num*price;
+        }
+        return total_price;
+}
+
+//统计加购数量
+uint32_t count_added_total_goods(tools_dll_t * added_list){
+    uint32_t total_count = 0;
+    for(tools_dll_t * tmp_node = added_list->next; tmp_node != NULL; tmp_node = tmp_node->next){
+            uint32_t num = ((wish_list_t*)(tmp_node->data))->num;
+            total_count += num;
+        }
+        return total_count;
+}
+
 /////////////////////////////结算功能/////////////
+static void refresh_settlement_title_lb(lv_obj_t * settlement_title_lb, tools_dll_t* added_list){
+    char total_price_settlement_lb_text[50] = {0};
+    sprintf(total_price_settlement_lb_text, "合计: %d元\n请扫码支付",caculate_added_total_price(added_list));
+    lv_label_set_text(settlement_title_lb, total_price_settlement_lb_text);
+    //更新二维码内容
+    char settlement_qr_code_data[200] = {0};
+    int total_price = caculate_added_total_price(added_list);
+    sprintf(settlement_qr_code_data, 
+        "=== 欢迎使用 ===\n请添加商品到购物车\n然后点击结算按钮\n共加购商品%d件\n需要支付: %d元",
+        count_added_total_goods(added_list),
+        total_price);
+    lv_qrcode_update(settlement_qr_code, settlement_qr_code_data, strlen(settlement_qr_code_data));
+}
+
+
 static void settlement_btn_btn_cb(lv_event_t * e){
     if(lv_obj_has_flag(e->user_data, LV_OBJ_FLAG_HIDDEN)){
 
-        lv_obj_clear_flag(e->user_data, LV_OBJ_FLAG_HIDDEN);
-        lv_obj_clear_flag(e->user_data, LV_OBJ_FLAG_HIDDEN);
-        //点击购物车时刷新购物车列表
-        //refresh_shopping_cart_list(shopping_cart_added_list, e->user_data);
+        lv_obj_clear_flag(e->user_data, LV_OBJ_FLAG_HIDDEN);    //显示二维码
+        lv_obj_clear_flag(shopping_cart_btn, LV_OBJ_FLAG_CLICKABLE);      //禁用购物车
+        refresh_settlement_title_lb(settlement_title_lb, shopping_cart_added_list);
     }
     else{
-        lv_obj_add_flag(e->user_data, LV_OBJ_FLAG_HIDDEN);
-        lv_obj_add_flag(e->user_data, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(e->user_data, LV_OBJ_FLAG_HIDDEN);  //隐藏二维码
+        lv_obj_add_flag(shopping_cart_btn, LV_OBJ_FLAG_CLICKABLE);  //打开购物车
     }
 
 }
 
 
-
 //结算服务函数
-void settlement(lv_obj_t * parent_o, tools_dll_t * added_list){
+lv_obj_t * settlement(lv_obj_t * parent_o, tools_dll_t * added_list){
     //购物车小窗
     lv_obj_t * settlement_window = lv_obj_create(parent_o);
     lv_obj_align(settlement_window, LV_ALIGN_TOP_MID, 0, 25); //对齐小窗
@@ -230,6 +267,9 @@ void settlement(lv_obj_t * parent_o, tools_dll_t * added_list){
     lv_obj_add_flag(settlement_window, LV_OBJ_FLAG_HIDDEN);  //隐藏小窗
     lv_obj_set_size(settlement_window, 300, 350);    //设置大小
     lv_obj_set_style_bg_color(settlement_window, lv_color_make(255, 201, 14), 0);
+
+    //添加二维码
+    create_settlement_qr_card(settlement_window);
 
      //添加结算按钮
      lv_obj_t * settlement_btn = lv_btn_create(parent_o);
@@ -251,34 +291,20 @@ void settlement(lv_obj_t * parent_o, tools_dll_t * added_list){
     
 
     //购物车标签
-    lv_obj_t * settlement_title = lv_label_create(settlement_window); 
-    lv_obj_align_to(settlement_title,settlement_window, LV_ALIGN_TOP_MID, -25, -12);  //对齐标题
+    settlement_title_lb = lv_label_create(settlement_window); 
+    lv_obj_align_to(settlement_title_lb,settlement_window, LV_ALIGN_TOP_MID, -25, -12);  //对齐标题
 
-    //获取购物车商品总价
-    uint64_t total_price = 0;   //购物车商品总价
-        for(tools_dll_t * tmp_node = added_list->next; tmp_node != NULL; tmp_node = tmp_node->next){
-            uint32_t num = ((wish_list_t*)(tmp_node->data))->num, 
-                price = ((wish_list_t*)(tmp_node->data))->goods->price;
-                total_price += num*price;
-        }
-    char settlement_title_text[80] = {0};
-    sprintf(settlement_title_text, "合计: %d 元",total_price);
-
-    lv_label_set_text(settlement_title, settlement_title_text); //设置标签文字
-    lv_obj_add_style(settlement_title, def_text_style, 0);   //标签支持中文
-
-    //创建二维码
-    // shopping_cart_list = lv_list_create(parent_o);
-    // lv_obj_add_flag(shopping_cart_list, LV_OBJ_FLAG_HIDDEN);  //隐藏小窗
-    
-    // lv_obj_set_size(shopping_cart_list, 390, 405);
-    // //列表对齐
-    // lv_obj_align(shopping_cart_list, LV_ALIGN_TOP_MID, 0, 40);
-    
-    // lv_obj_add_style(shopping_cart_list, def_text_style, 0);   //列表支持中文
-
+    lv_label_set_text(settlement_title_lb, "合计: 0元\n\n扫码支付"); //设置标签文字
+    lv_obj_add_style(settlement_title_lb, def_text_style, 0);   //标签支持中文
+    return  settlement_title_lb;
 }
 
-void create_settlement_qr_card(){
-    
+lv_obj_t * create_settlement_qr_card(lv_obj_t * parent_o){
+    // 创建一个150x150像素的二维码
+    settlement_qr_code = lv_qrcode_create(parent_o, 250, lv_color_hex(0x000000), lv_color_hex(0xFFFFFF)); // 背景色(白色)
+    lv_obj_align(settlement_qr_code, LV_ALIGN_BOTTOM_MID, 0, 0);
+    const char * initial_data = "=== 欢迎使用 ===\n请添加商品到购物车\n然后点击结算按钮";
+    lv_qrcode_update(settlement_qr_code, initial_data, strlen(initial_data));
+    printf("QR code created with initial content: \n%s\n", initial_data);
+    return settlement_qr_code;
 }

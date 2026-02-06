@@ -91,6 +91,10 @@ void main_screen(){
 
     //将商品添加到页面1上
     tools_dll_t * tmp = add_page_k_item_card(main_screen_page1_o, listed_goods);
+
+    //创建多个页面
+
+
     //添加购物车相关功能
     lv_obj_t * shopping_cart_btn_lb = shopping_cart(main_screen_o);
     //添加结算按钮相关功能
@@ -207,3 +211,6 @@ tools_dll_t* add_page_k_item_card(lv_obj_t * parent_o, tools_dll_t * listed_good
     return page_k_item_card;
 }
 
+
+
+//////////////////

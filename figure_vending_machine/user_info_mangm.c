@@ -1,15 +1,47 @@
 #include "figure_vending_machine/user_info_mangm.h"
 
+tools_dll_t * user_info_list = NULL;  //全局保存用户信息变量
 
 
-user_info * input_info(){   //提取输入的用户名和密码
-    user_info * user_tmp = (user_info *)malloc(sizeof(user_info));
+
+//验证用户信息 成功返回1
+int verify_user_name_psw(user_info_t * usr_info, tools_dll_t * user_info_list){
+    if(user_info_list && usr_info){
+        //debug
+        printf("验证1-%d\n",user_info_list->num);
+        for(tools_dll_t * tmp_node = user_info_list->next; tmp_node != NULL; tmp_node = tmp_node->next){
+            printf("验证2\n");
+            //debug
+            printf("链表%s\n%s\n",((user_info_t*)(tmp_node->data))->user_name, 
+                ((user_info_t*)(tmp_node->data))->user_psw
+            );
+            printf("传入%s\n%s\n",usr_info->user_name, usr_info->user_psw);
+            if(strcmp(((user_info_t*)(tmp_node->data))->user_name, usr_info->user_name)){ //用户名验证成功
+                if(strcmp(((user_info_t*)(tmp_node->data))->user_psw, usr_info->user_psw)){ //密码验证成功
+                    return 1;//成功返回1
+                }
+                else{
+                    return -2;  //密码错误
+                }
+            }
+            else{
+                return -1;  //用户名错误
+            }
+        }
+    }
+    return 0;
+}
+
+
+//提取输入的用户名和密码
+user_info_t * input_info(){   
+    user_info_t * user_tmp = (user_info_t *)malloc(sizeof(user_info_t));
     if(user_tmp){
         
         printf("输入用户名：");
         scanf("%s",&user_tmp->user_name[0]);
         printf("输入密码：");
-        scanf("%s",&user_tmp->user_pwd[0]);
+        scanf("%s",&user_tmp->user_psw[0]);
         return user_tmp;
     }
     else{
@@ -18,87 +50,94 @@ user_info * input_info(){   //提取输入的用户名和密码
     }
    
 }
-int find_user_name(char* user_name, FILE * p_user_record){
-    if(p_user_record && user_name){
-        char name_pwd_buf[32]={0};
-        while(fgets(name_pwd_buf, 32, p_user_record)){    //循环读取每一行
-            char * name = strtok(name_pwd_buf,"@");
-            if(name){
-                if(!strcmp(name, user_name)){
-                    return 1;   //有重复用户名
-                }
-            }
-            else{
-                perror("切割错误");
-                return -1;
-            }
-        }
-        return 0;   //     无重复用户名
-    }
-    else{
-        perror("文件描述符错误");
-        return -2;
-    }
-}
-
-int save_user_info(user_info * p_user_info, FILE* p_user_record){   //保存用户信息到文件
-    if(p_user_info && p_user_record){
-        char user_name_pwd_buf[32] = {0};
-        sprintf(user_name_pwd_buf, "%s@%s",&p_user_info->user_name[0], &p_user_info->user_pwd[0]);
-        fwrite(user_name_pwd_buf, strlen(&user_name_pwd_buf[0]), 1, p_user_record);
-        fwrite("\n", 1, 1, p_user_record);
-        return 1;
-    }
-    else{
-        perror("用户信息保存失败");
-        return 0;
-    }
-}
-int user_register(char* record_file){
-
-    while(1){
-        user_info * p_user = input_info();
-        if(p_user){
-            FILE * user_info_recorder = fopen(record_file, "r");    //标准io打开文件
-            if(user_info_recorder == NULL){ //文件不存在则新建
-                user_info_recorder = fopen(record_file, "w");
-                fclose(user_info_recorder);
-                user_info_recorder = fopen(record_file, "r");
-            }
-            if(user_info_recorder){
-                int find_result = find_user_name(&p_user->user_name[0], user_info_recorder);    //查找用户名
-                if(find_result == 0){   //添加新用户到文件
-                    fclose(user_info_recorder);
-                    user_info_recorder = fopen(record_file, "a");
-                    if(user_info_recorder){
-                        if(save_user_info(p_user, user_info_recorder)){ //保存用户信息到文件
-                            printf("ok\n");
-                            fclose(user_info_recorder); //关闭文件
-                            free(p_user);   //释放暂存用户信息的内存
-                            break;
-                        }
-                        else{   //保存失败，关闭文件和释放缓存
-                            fclose(user_info_recorder);
-                            free(p_user);
-                            printf("保存失败");
-                            return 0;
-                        }
-                    }
-                    else{   //追加模式打开文件失败，关闭文件和释放缓存
-                        free(p_user);
-                        perror("添加失败");
-                        return 0;
-                    }
-                }
-                else if(find_result == 1){  //用户名已存在，重新输入注册信息
-                    fclose(user_info_recorder);
-                    free(p_user);
-                    //system("clear");
-                    printf("用户名已存在!\n");
-                    continue;
-                }
+//查找用户名不存在返回0
+int find_user_name_in_list(char* user_name, tools_dll_t * user_info_list){
+    if(user_info_list && user_name){
+        for(tools_dll_t * tmp_node = user_info_list->next; tmp_node != NULL; tmp_node = tmp_node->next){
+            if(strcmp(((user_info_t*)(tmp_node->data))->user_name, user_name)){ //存在重名用户
+                return 1;
             }
         }
     }
-    return 1;   //添加成功返回1
+    return 0;
+}
+
+
+//初始化链表
+void init_user_info_list(char* user_info_file_path){
+    if(!user_info_list) { // 为空则初始化
+        user_info_list = tools_init_dll_list();
+    } // 加载到链表
+    FILE * user_info_recorder = fopen(user_info_file_path, "r"); // 存在则读取
+    //debug
+    printf("init-1\n");
+    if(user_info_recorder != NULL) {                             // 打开成功
+        //debug
+        printf("init-2\n");
+        char name_pwd_buf[32] = {0};                             // 文件读取行缓冲
+        while(fgets(name_pwd_buf, 32, user_info_recorder)){           // 循环读取每一行
+            //debug
+            printf("init-3\n");
+            char * name = strtok(name_pwd_buf, "@");             // 保存用户名
+            char * psw  = strtok(name_pwd_buf, "\n");            // 保存密码
+            if(name && psw) {
+                user_info_t * user_tmp = (user_info_t *)malloc(sizeof(user_info_t));
+                strcpy(user_tmp->user_name, name);
+                strcpy(user_tmp->user_psw, psw);
+                tools_add_dll_list_node(user_info_list, user_tmp); // 保存信息到链表
+            }
+        }
+    }
+    // 否则没有用户信息要读取
+}
+
+//添加一个注册的用户信息到链表
+void add_user_info_to_list(tools_dll_t * user_info_list, user_info_t* user_info){
+    tools_add_dll_list_node(user_info_list, user_info);
+}
+
+//将链表信息写入文件
+int write_user_info_list_to_file(tools_dll_t *user_info_list, char* user_info_file_path){
+    if(user_info_list && user_info_file_path) {
+        FILE * user_info_recorder = fopen(user_info_file_path, "w"); // 标准io打开文件,文件不存在则新建
+        if(user_info_recorder != NULL) {                             // 打开成功
+            for(tools_dll_t * tmp_node = user_info_list->next; tmp_node != NULL; tmp_node = tmp_node->next) {
+                char user_name_pwd_buf[32] = {0};
+                sprintf(user_name_pwd_buf, "%s@%s\n", 
+                    &(((user_info_t *)(tmp_node->data))->user_name[0]),
+                    &(((user_info_t *)(tmp_node->data))->user_psw[0])
+                );
+                fwrite(user_name_pwd_buf, strlen(&user_name_pwd_buf[0]), 1, user_info_recorder);    //写入文件
+            }
+            fclose(user_info_recorder); //写入成功关闭文件
+            return 1; // 成功返回1
+        } else {
+            perror("用户信息保存失败");
+            return 0;
+        }
+    }
+}
+
+//注册的信息最后保存到文件
+void user_register(tools_dll_t *user_info_list, char* user_info_file_path){
+    user_info_t * tmp = input_info();
+    if(find_user_name_in_list(tmp->user_name, user_info_list) == 1) { // 用户名已存在
+        free(tmp);                                                    // 释放暂存的信息
+        user_register(user_info_list, user_info_file_path);           // 重新注册
+    } else {
+        add_user_info_to_list(user_info_list, tmp);                                  // 添加信息到链表
+        if(write_user_info_list_to_file(user_info_list, user_info_file_path) == 1) { // 写入链表到文件
+        }
+    }
+}
+
+
+
+int is_admin(user_info_t * user){
+    if(!strcmp("admin", user->user_name)) {   // 用户名验证成功
+        if(!strcmp("123456", user->user_psw)) { // 密码验证成功
+            return 1;                                                                 // 成功返回1
+        }
+    }
+    return 0;
 }

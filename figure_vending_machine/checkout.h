@@ -25,5 +25,9 @@ void minus_wish_list_goods(tools_dll_t * added_list, goods_info_t * goods);
 void init_shopping_cart_added_list();
 
 void set_shopping_cart_btn_goods_counter(lv_obj_t * shopping_cart_btn_lb, uint32_t count);
-void settlement(lv_obj_t * parent_o, tools_dll_t * added_list);
+lv_obj_t * settlement(lv_obj_t * parent_o, tools_dll_t * added_list);
+lv_obj_t * create_settlement_qr_card(lv_obj_t * parent_o);
+uint32_t count_added_total_goods(tools_dll_t * added_list);
+uint64_t caculate_added_total_price(tools_dll_t * added_list);
+static void refresh_settlement_title_lb(lv_obj_t * settlement_title_lb, tools_dll_t* added_list);
 #endif

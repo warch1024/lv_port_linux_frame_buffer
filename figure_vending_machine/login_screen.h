@@ -5,6 +5,8 @@
 #include "figure_vending_machine/user_info_mangm.h"
 #include "tools/tools.h"
 
+#include "figure_vending_machine/goods_mangm_con.h"
+
 #include"figure_vending_machine/screen_objs.h"  //标准库
 /*初始化登陆屏幕前置组件
 */
@@ -26,6 +28,6 @@ void sm_logup_btn_cb(lv_event_t * e);
 void bk_logup_btn_cb(lv_event_t * e);
 void save_logup_info();
 void load_def_login_theme(lv_obj_t * screen_o, char * def_theme_path);
-
+void admin_management();
 
 #endif

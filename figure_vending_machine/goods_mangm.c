@@ -19,7 +19,10 @@ static uint32_t def_goods_price[1000] = {22, 33, 99, 88},
 //初始化最开始
 void init_def_goods_to_list(){
     //初始化头节点
-    listed_goods = tools_init_dll_list();    
+    if(!listed_goods){
+        listed_goods = tools_init_dll_list();    
+
+    
     //初始化默认商品到已上架列表
     for(int i=0; i<sizeof(def_goods_title)/sizeof(def_goods_title[0]); i++){
         goods_info_t * tmp = (goods_info_t*)malloc(sizeof(goods_info_t));   //商品信息对象
@@ -32,7 +35,7 @@ void init_def_goods_to_list(){
         tmp->price = def_goods_price[i];    //商品价格
         tools_add_dll_list_node(listed_goods, tmp);   //增加商品节点
     }
-    
+}
     
 }
 
