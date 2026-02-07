@@ -6,14 +6,16 @@ tools_dll_t * listed_goods = NULL; //全局已上架商品列表
 static char def_goods_title[][40] = {"2233干杯", 
                                      "2233干贝", 
                                      "2233乾杯",
-                                     "2233赣北"},
+                                     "2233赣北",
+                                    "2233[]~(￣▽￣)~*"},
         def_goods_pic_path[][100] = {"S:/IOT/projects/26-1-30/resources/item1.jpg\0", 
                                     "S:/IOT/projects/26-1-30/resources/item2.jpg\0",
                                     "S:/IOT/projects/26-1-30/resources/item3.jpg\0",
-                                    "S:/IOT/projects/26-1-30/resources/item1.jpg\0"};
+                                    "S:/IOT/projects/26-1-30/resources/item1.jpg\0",
+                                    "S:/IOT/projects/26-1-30/resources/item3.jpg\0",};
 //商品价格和数量
-static uint32_t def_goods_price[1000] = {22, 33, 99, 88},
-        def_goods_num[1000] = {999, 999, 999, 1};
+static uint32_t def_goods_price[1000] = {22, 33, 99, 88, 998},
+        def_goods_num[1000] = {999, 999, 999, 1, 10};
 
 
 //初始化最开始

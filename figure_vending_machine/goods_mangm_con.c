@@ -55,13 +55,6 @@ void goods_management_console(void) {
 void print_goods_info_interactive(void) {
     printf("\n=== 当前上架商品列表 ===\n");
     
-    // 使用你现有的print_goods_info函数
-    if(listed_goods) {
-        print_goods_info(listed_goods);
-    } else {
-        printf("暂无商品信息\n");
-    }
-    
     printf("\n=== 详细信息 ===\n");
     if(listed_goods && listed_goods->next) {
         int count = 0;
@@ -528,6 +521,10 @@ void search_goods_by_price_range(int min_price, int max_price) {
         printf("共找到 %d 件商品\n", found_count);
     }
 }
+
+
+
+
 
 // 菜单入口函数
 void show_goods_management_menu(void) {

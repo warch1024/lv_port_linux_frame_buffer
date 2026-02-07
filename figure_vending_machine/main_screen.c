@@ -3,7 +3,7 @@
 
 #define ONE_PAGE_ITERMS_NUM 4
 #define GOODS_ITEM_CARD_LB 65533    //设置商品卡片的标签对象的用户标识
-static item_card_ros one_screen_item_card[ONE_PAGE_ITERMS_NUM];
+static item_card_t one_screen_item_card[ONE_PAGE_ITERMS_NUM];
 
 
 const char* get_goods_card_title(lv_obj_t* item_spinbox){
@@ -73,26 +73,30 @@ void main_screen(){
     main_screen_o=lv_obj_create(NULL);
     //设置大小
     lv_obj_set_size(main_screen_o,800,480);
-    //创建商品展示页面1，商品显示在此窗口上
-    lv_obj_t * main_screen_page1_o=lv_obj_create(main_screen_o);
-    //设置商品展示页面1大小
-    lv_obj_set_size(main_screen_page1_o,800,480);
+    // 设置背景颜色为白色
+    lv_obj_set_style_bg_color(main_screen_o, lv_color_hex(0xd4e9f7), LV_PART_MAIN);  
+
+    //给主屏幕添加屏幕滑动
+    //lv_obj_add_event_cb(main_screen_o, main_screen_guest_cb, LV_EVENT_GESTURE, NULL);
 
     //加载主界面删除旧窗口
     lv_scr_load_anim(main_screen_o, LV_SCR_LOAD_ANIM_MOVE_LEFT, 500, 0, true);
 
-     //创建标签
-    lv_obj_t *main_screen_title=lv_label_create(main_screen_o);
-    lv_obj_set_align(main_screen_title,LV_ALIGN_TOP_MID);
-    //标签设置文字
-    lv_label_set_text(main_screen_title,"2233扭蛋贩卖机");
-    lv_obj_add_style(main_screen_title,def_text_style,0);
+    add_page_4_card_(main_screen_o, listed_goods);
 
-
-    //将商品添加到页面1上
-    tools_dll_t * tmp = add_page_k_item_card(main_screen_page1_o, listed_goods);
-
-    //创建多个页面
+    // 标签背景
+    lv_obj_t *main_screen_title_bg = lv_obj_create(main_screen_o);
+    lv_obj_set_size(main_screen_title_bg, 150,25);
+    lv_obj_set_align(main_screen_title_bg,LV_ALIGN_TOP_MID);
+    //lv_obj_set_style_radius(main_screen_title_bg, 0, LV_PART_MAIN);
+    lv_obj_set_style_border_width(main_screen_title_bg, 0, LV_PART_MAIN);//去除边框
+    // lv_obj_set_style_bg_opa(main_screen_title_bg, 50,LV_PART_MAIN);
+    //创建标签
+   lv_obj_t *main_screen_title=lv_label_create(main_screen_o);
+   lv_obj_set_align(main_screen_title,LV_ALIGN_TOP_MID);
+   //标签设置文字
+   lv_label_set_text(main_screen_title,"2233扭蛋贩卖机");
+   lv_obj_add_style(main_screen_title,def_text_style,0);
 
 
     //添加购物车相关功能
@@ -102,7 +106,7 @@ void main_screen(){
 }
 
 
-item_card_ros create_main_screen_item_card(lv_obj_t * parent_o, char * item_title_text, int price, char * bg_pic_path){
+item_card_t create_main_screen_item_card(lv_obj_t * parent_o, char * item_title_text, int price, char * bg_pic_path){
     
 
     //print_goods_info(listed_goods);
@@ -112,6 +116,7 @@ item_card_ros create_main_screen_item_card(lv_obj_t * parent_o, char * item_titl
     //set window size
     lv_obj_set_size(item_window, 200, 300);   //固定尺寸
 
+    //lv_obj_set_style_opa(item_window, LV_OPA_50, LV_PART_MAIN);  // 完全透明
     //直接设置每个对象的样式
     lv_obj_set_style_bg_img_src(item_window, bg_pic_path, 0);   //设置背景图片
 
@@ -160,14 +165,14 @@ item_card_ros create_main_screen_item_card(lv_obj_t * parent_o, char * item_titl
 
     //标签设置文字
     char item_price_str[50] = {0};   //转换价格数字到文本
-    sprintf(item_price_str,"售价: %d CNY", price);
+    sprintf(item_price_str,"售价: %d CNY\n\n", price);
     lv_label_set_text(item_price_title_lb, item_price_str); //设置文字
     lv_obj_add_style(item_price_title_lb, def_text_style,0);    //添加样式支持
 
 
     //lv_obj_set_style_bg_img_src(item_window, bg_pic_path, 0);   //设置背景图片
     //返回值
-    item_card_ros ret_val = {.item_window   = item_window,
+    item_card_t ret_val = {.item_window   = item_window,
                              .item_title_lb = item_title_lb,
                              .item_sb       = item_spinbox,
                              .iten_price_lb = item_price_title_lb};
@@ -183,7 +188,7 @@ tools_dll_t* add_page_k_item_card(lv_obj_t * parent_o, tools_dll_t * listed_good
     // print_goods_info(listed_goods);
     //创建k个卡片
     for(tools_dll_t * tmp_node = listed_goods->next; tmp_node != NULL; tmp_node = tmp_node->next){
-        item_card_ros * item_ret_o = (item_card_ros *)malloc(sizeof(item_card_ros));
+        item_card_t * item_ret_o = (item_card_t *)malloc(sizeof(item_card_t));
         //创建单个商品小窗
         if(item_ret_o){
             *item_ret_o = create_main_screen_item_card(parent_o, 
@@ -196,21 +201,75 @@ tools_dll_t* add_page_k_item_card(lv_obj_t * parent_o, tools_dll_t * listed_good
     }
 
     //卡片窗口对齐
-    lv_obj_align_to(((item_card_ros*)(page_k_item_card->next->data))->item_window,
+    lv_obj_align_to(((item_card_t*)(page_k_item_card->next->data))->item_window,
          parent_o, LV_ALIGN_TOP_LEFT, 0, 30);   //第一张卡片单独对齐
     //其余循环对齐
     for(tools_dll_t * tmp_node = page_k_item_card->next->next; tmp_node != NULL; tmp_node = tmp_node->next){
-        lv_obj_align_to(((item_card_ros*)(tmp_node->data))->item_window,
-         ((item_card_ros*)(tmp_node->prev->data))->item_window, LV_ALIGN_OUT_RIGHT_MID, 5, 0);   
+        lv_obj_align_to(((item_card_t*)(tmp_node->data))->item_window,
+         ((item_card_t*)(tmp_node->prev->data))->item_window, LV_ALIGN_OUT_RIGHT_MID, 5, 0);   
     }
     //价签对齐窗口
     for(tools_dll_t * tmp_node = page_k_item_card->next; tmp_node != NULL; tmp_node = tmp_node->next){
-        lv_obj_align_to(((item_card_ros*)(tmp_node->data))->iten_price_lb,
-         ((item_card_ros*)(tmp_node->data))->item_window, LV_ALIGN_OUT_BOTTOM_MID, 5, 0); 
+        lv_obj_align_to(((item_card_t*)(tmp_node->data))->iten_price_lb,
+         ((item_card_t*)(tmp_node->data))->item_window, LV_ALIGN_OUT_BOTTOM_MID, 5, 0); 
     }
     return page_k_item_card;
 }
 
 
+////////////////
+#define MAX_CARD_PER_ROW 4
+//当前页面
+static lv_obj_t * main_screen_current_page_ = NULL;   //保存当前page所在节点的地址
 
-//////////////////
+static tools_dll_t * all_main_screen_goods_cards_ = NULL;   //管理所有商品展示卡片对象
+
+//一个页面创建4个card
+lv_obj_t * add_page_4_card_(lv_obj_t * parent_o, tools_dll_t * listed_goods){
+    //初始化所有卡片和页面对象管理链表
+    all_main_screen_goods_cards_ = tools_init_dll_list();//管理所有卡片
+
+    int listed_goods_count = listed_goods->num; //获取总已上架商品数量
+    //创建新页面
+    lv_obj_t * main_screen_page1 = lv_obj_create(parent_o);
+    lv_obj_set_size(main_screen_page1, lv_obj_get_width(parent_o), lv_obj_get_height(parent_o));//设置尺寸
+    lv_obj_align_to(main_screen_page1, parent_o, LV_ALIGN_BOTTOM_MID,0,0);  //对齐
+
+
+    //遍历已上架列表
+    for(tools_dll_t * tmp_node = listed_goods->next; tmp_node != NULL; tmp_node = tmp_node->next){
+        //创建小窗创建函数返回值结构
+        item_card_t * item_ret_o = (item_card_t *)malloc(sizeof(item_card_t));
+        //创建单个商品小窗
+        if(item_ret_o){
+            *item_ret_o = create_main_screen_item_card(main_screen_page1, 
+                ((goods_info_t* )(tmp_node->data))->title, 
+                ((goods_info_t* )(tmp_node->data))->price, 
+                ((goods_info_t* )(tmp_node->data))->goods_pic_path);
+        }
+        //添加商品小窗对象保存链表尾
+        tools_add_dll_list_node(all_main_screen_goods_cards_, item_ret_o);
+
+        //卡片窗口对齐，第一张对齐父窗口new_page
+        if(all_main_screen_goods_cards_->num == 1){ //全局第一张
+            lv_obj_align_to(((item_card_t*)(all_main_screen_goods_cards_->tail->data))->item_window,
+                main_screen_page1, LV_ALIGN_TOP_LEFT, 0, 20);   //第一张卡片单独对齐
+        }
+        else if(all_main_screen_goods_cards_->num % MAX_CARD_PER_ROW == 1){    //第二行第一张对齐到上一张
+            lv_obj_align_to(((item_card_t*)(all_main_screen_goods_cards_->tail->data))->item_window,
+                ((item_card_t*)(all_main_screen_goods_cards_->tail->prev->prev->prev->prev->data))->item_window,
+                LV_ALIGN_OUT_BOTTOM_MID, 0, 30);
+        }
+        else{   //其余循环对齐前一张
+            lv_obj_align_to(((item_card_t*)(all_main_screen_goods_cards_->tail->data))->item_window,
+                ((item_card_t*)(all_main_screen_goods_cards_->tail->prev->data))->item_window,
+                LV_ALIGN_OUT_RIGHT_MID, 5, 0);
+        }
+        //所有的价签对齐卡片
+        lv_obj_align_to(((item_card_t*)(all_main_screen_goods_cards_->tail->data))->iten_price_lb,
+            ((item_card_t*)(all_main_screen_goods_cards_->tail->data))->item_window,
+            LV_ALIGN_OUT_BOTTOM_MID, 5, 0);
+        //完成之后将page对象保存到链表all_main_screen_pages里面
+    }
+}
+///////////////

@@ -176,8 +176,8 @@ tools_dll_t * tools_add_dll_list_node(tools_dll_t * dll_list, void* data){
             dll_list->tail = tmp;
             dll_list->num ++;   //更新节点数量
         }
+        return tmp; //返回当前节点
     }
-    return dll_list;
 }
 
 //删除node节点
