@@ -3,8 +3,9 @@
 #include "lv_drivers/display/fbdev.h"
 #include "lv_drivers/indev/evdev.h"
 
-#include "test-1.h"
-#include "figure_vending_machine/login_screen.h"
+// #include "test-1.h"
+// #include "figure_vending_machine/login_screen.h"
+
 #include <unistd.h>
 #include <pthread.h>
 #include <time.h>
@@ -78,7 +79,8 @@ int main(int argc, char ** argv)
     //printf("-1 ");
     //login_screen();
 
-    figure_vending_machine();
+    // figure_vending_machine();
+    make_player();
 
 
     /*Handle LitlevGL tasks (tickless mode)*/

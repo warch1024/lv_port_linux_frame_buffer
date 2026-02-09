@@ -3,11 +3,11 @@
 
 
 int figure_vending_machine(){
-    init_base_widgets();        //初始化中文字体支持
+    init_base_widget();        //初始化中文字体支持
     login_screen(); //显示登陆界面
 }
 //初始化必要组件，输入法，中文支持style等
-void init_base_widgets(){
+void init_base_widget(){
     // 设置全局默认字体
     if(!def_text_style) {                                          
         def_text_style = (lv_style_t *)malloc(sizeof(lv_style_t)); // 申请字体style

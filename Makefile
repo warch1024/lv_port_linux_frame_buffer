@@ -14,6 +14,7 @@ bindir ?= $(prefix)/bin
 #Collect the files to compile
 MAINSRC = \
 	./main.c \
+	./mplayer_player.c \
 	figure_vending_machine/figure_vending_machine.c \
 	figure_vending_machine/login_screen.c \
 	figure_vending_machine/main_screen.c \
