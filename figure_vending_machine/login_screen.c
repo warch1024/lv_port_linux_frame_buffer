@@ -1,7 +1,7 @@
 #include "figure_vending_machine/login_screen.h"    
 
 
-#define USER_RECORD_FILE "/IOT/projects/26-1-30/user_info_recorder.txt"
+#define USER_RECORD_FILE "/IOT/projects/openChat/user_info_recorder.txt"
 
 // #include"figure_vending_machine/screen_objs.h"
 //登录屏幕的所有组件
@@ -17,7 +17,7 @@ static lv_style_t * login_bg_style = NULL,  //登录屏幕背景设置样式
 //键盘和中文支持
 static cn_kb_cp_ros login_cn_kb_pair = {.cn_kb = NULL, .cn_kb_cp = NULL};
 //默认主题图片路径
-static char * def_login_theme_path = "S:/IOT/projects/26-1-30/resources/login_bg2.jpg"; 
+static char * def_login_theme_path = "S:/IOT/projects/openChat/resources/login_bg2.jpg"; 
 
 //初始化登录屏幕基础组件
 void login_screen_base_wigdet_init(lv_obj_t * screen){
@@ -80,7 +80,7 @@ void login_change_theme_checkbox_cb(lv_event_t * e){  //复选框点击回调函
         if(e->target == login_check_box1){
             lv_obj_clear_state(login_check_box2, LV_STATE_CHECKED);//取消2选择
             // 设置背景图片
-            lv_style_set_bg_img_src(login_bg_style, "S:/IOT/projects/26-1-30/resources/login_bg1.jpg");
+            lv_style_set_bg_img_src(login_bg_style, "S:/IOT/projects/openChat/resources/login_bg1.jpg");
             // 设置背景图片的裁剪（可选）
             lv_style_set_bg_img_opa(login_bg_style, LV_OPA_COVER);
             // 应用样式到屏幕
@@ -93,7 +93,7 @@ void login_change_theme_checkbox_cb(lv_event_t * e){  //复选框点击回调函
             lv_obj_clear_state(login_check_box1, LV_STATE_CHECKED);//取消1选择
             
             // 设置背景图片
-            lv_style_set_bg_img_src(login_bg_style, "S:/IOT/projects/26-1-30/resources/login_bg2.jpg");
+            lv_style_set_bg_img_src(login_bg_style, "S:/IOT/projects/openChat/resources/login_bg2.jpg");
             // 设置背景图片的裁剪（可选）
             lv_style_set_bg_img_opa(login_bg_style, LV_OPA_COVER);
             

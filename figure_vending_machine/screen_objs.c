@@ -1,5 +1,6 @@
 #include"figure_vending_machine/screen_objs.h"  //标准库
 
+//管理所有屏幕对象
 lv_obj_t                //管理所有屏幕
     * login_screen_o = NULL,   //登录界面
     * main_screen_o = NULL;   //主界面

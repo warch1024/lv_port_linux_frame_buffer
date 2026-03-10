@@ -11,7 +11,10 @@
 #include <sys/time.h>
 
 #define NAMD_PIPE "/IOT/projects/26-2-9/maplay_pip"
-
+/**
+ 视频播放器
+ * 
+ */
 lv_style_t * player_text_style =NULL;
 void init_player_font(){
     // 设置全局默认字体
