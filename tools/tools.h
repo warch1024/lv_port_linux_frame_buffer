@@ -67,6 +67,15 @@ void tools_hidden_pinyin_kb(lv_obj_t * kb, lv_obj_t * cp);
 * @param pht 提示
 */
 lv_obj_t* tools_create_login_ta(lv_obj_t* parent_o, int width, int height, char* pht);
+/**
+ * @brief 创建通用输入框，并返回输入框对象，添加中文支持，限定一行，限定8长度
+ * @param parent_o 父对象
+ * @param width 宽度
+ * @param height 高度
+ * @param pht 提示
+ * @return lv_obj_t* 输入框对象
+ */
+lv_obj_t* tools_create_common_ta(lv_obj_t* parent_o, int width, int height, char* pht);
 
 /*创建登录窗口的按钮标签，并返回按钮对象，设置内部对齐，支持中文
 * @param parent_o 按钮对象

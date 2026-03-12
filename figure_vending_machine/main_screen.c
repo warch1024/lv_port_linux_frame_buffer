@@ -7,15 +7,25 @@
 static item_card_t one_screen_item_card[ONE_PAGE_ITERMS_NUM];
 
 //主屏幕的对象
-static lv_obj_t * open_chat_ol_list = NULL; //聊天界面的在线用户列表框对象
-
+static lv_obj_t * open_chat_ol_list = NULL,//聊天界面的在线用户列表框对象
+                * open_chat_input_box = NULL;//聊天界面的输入框对象
+static cn_kb_cp_ros open_chat_screen_cn_kb_pair = {.cn_kb = NULL, .cn_kb_cp = NULL};//主屏幕的中文键盘对象
 //主屏幕入口函数
 void main_screen_init(){
 
     //加载主屏幕的功能
     main_screen();
 }
-
+void oc_hidden_kb_cb(lv_event_t * e){   //隐藏键盘回调
+    tools_hidden_pinyin_kb(open_chat_screen_cn_kb_pair.cn_kb, open_chat_screen_cn_kb_pair.cn_kb_cp);
+    
+}
+void oc_ta_kb_associate_cb(lv_event_t * e){
+    //显示键盘
+    tools_show_pinyin_kb(open_chat_screen_cn_kb_pair.cn_kb, open_chat_screen_cn_kb_pair.cn_kb_cp);
+    //连接键盘和输入框
+    tools_ta_kb_associate(e->target, open_chat_screen_cn_kb_pair.cn_kb);
+}
 
 const char* get_goods_card_title(lv_obj_t* item_spinbox){
     lv_obj_t* item_window = lv_obj_get_parent(item_spinbox);    //获取父对象
@@ -113,6 +123,8 @@ void main_screen(){
    // //添加结算按钮相关功能
    // settlement(main_screen_o, shopping_cart_added_list);
    //
+   open_chat_screen_cn_kb_pair =  tools_create_pinyin_ime(main_screen_o, 500, 200);   //屏幕上添加键盘,默认隐藏
+   lv_obj_add_event_cb(main_screen_o, oc_hidden_kb_cb, LV_EVENT_CLICKED, NULL); //添加点击屏幕隐藏键盘事件
    //加载主界面删除旧窗口（login）使用动画转场
    lv_scr_load_anim(main_screen_o, LV_SCR_LOAD_ANIM_MOVE_LEFT, 500, 0, true);
 }
@@ -318,10 +330,10 @@ void load_open_chat_main_interface(lv_obj_t * main_screen_o){   //传入主屏�
     lv_coord_t input_interface_h = lv_obj_get_height(open_chat_input_interface_o);//获取输入框容器高度
     lv_coord_t input_interface_w = lv_obj_get_width(open_chat_input_interface_o);//获取输入框容器宽度
 
-    //在输入框容器里面创建输入框
-    lv_obj_t * open_chat_input_box = lv_textarea_create(open_chat_input_interface_o);
-    lv_obj_set_size(open_chat_input_box, input_interface_w, input_interface_h);//设置尺寸,剩120px给按钮
-    lv_obj_align_to(open_chat_input_box, open_chat_input_interface_o, LV_ALIGN_TOP_MID, 0, 0);  //对齐
+    //在输入框容器里面创建输入框,添加中文支持
+    lv_obj_t * open_chat_input_ta = tools_create_common_ta(open_chat_input_interface_o, input_interface_w, input_interface_h, "请输入消息");
+    lv_obj_align_to(open_chat_input_ta, open_chat_input_interface_o, LV_ALIGN_TOP_MID, 0, 0);  //对齐
+    lv_obj_add_event_cb(open_chat_input_ta, oc_ta_kb_associate_cb, LV_EVENT_FOCUSED, NULL); //添加点击输入框显示键盘事件
     
     //创建发送表情包，文件，发送消息按钮对象
     //创建发送表情包按钮
@@ -373,5 +385,5 @@ void open_chat_ol_client_btn_cb(lv_event_t * e){    //在线用户列表按钮�
     //debug
     printf("debug: 点击了在线用户 %s@%hu\n", client->ip, client->port);
     //获取输入框中的文本
-    char * input_text = lv_textarea_get_text();
+    // char * input_text = lv_textarea_get_text(open_chat_input_box);
 }

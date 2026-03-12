@@ -38,4 +38,5 @@ lv_obj_t * add_page_4_card_(lv_obj_t * parent_o, tools_dll_t * listed_goods);
 ////////
 void load_open_chat_main_interface(lv_obj_t * main_screen_o);
 void add_open_chat_ol_client_to_list(lv_obj_t * open_chat_ol_list, struct clientmsg * online_clients);
+void open_chat_ol_client_btn_cb(lv_event_t * e);
 #endif
