@@ -373,5 +373,5 @@ void open_chat_ol_client_btn_cb(lv_event_t * e){    //在线用户列表按钮�
     //debug
     printf("debug: 点击了在线用户 %s@%hu\n", client->ip, client->port);
     //获取输入框中的文本
-    char * input_text = lv_textarea_get_text(open_chat_input_box);
+    char * input_text = lv_textarea_get_text();
 }
