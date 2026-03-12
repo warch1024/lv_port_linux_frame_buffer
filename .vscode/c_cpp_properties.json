@@ -1,0 +1,63 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "D:/ProgramFiles/cygwin64/lib/**",
+                "D:/ProgramFiles/cygwin64/usr/**",
+                "D:/ProgramFiles/msys2/ucrt64/lib/**",
+                "D:/ProgramFiles/msys2/ucrt64/include/**",
+                "D:/ProgramFiles/msys2/usr/include/**",
+                "D:/ProgramFiles/msys2/usr/lib/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "windowsSdkVersion": "10.0.22621.0",
+            "cStandard": "c11",
+            "cppStandard": "c++20",
+            "intelliSenseMode": "linux-gcc-x64",
+            "compilerPath": "D:/ProgramFiles/cygwin64/bin/gcc.exe",
+            "compilerPathInCppPropertiesJson": "D:/ProgramFiles/cygwin64/bin/gcc.exe",
+            "mergeConfigurations": false,
+            "recursiveIncludes": {},
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true
+            }
+        },
+        {
+            "name": "arm-linux",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "cStandard": "c11",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-arm",
+            "compilerPath": "D:/ProgramFiles/cygwin64/bin/gcc.exe"
+        },
+        {
+            "name": "linux-gcc",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-gcc-x64",
+            "compilerPath": "D:/ProgramFiles/cygwin64/bin/gcc.exe"
+        }
+    ],
+    "version": 4
+}
