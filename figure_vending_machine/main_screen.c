@@ -99,6 +99,9 @@ void main_screen(){
     lv_obj_set_style_bg_color(main_screen_o, lv_color_hex(0xd4e9f7), LV_PART_MAIN);  
     // // 添加商品卡片到主屏幕
     // add_page_4_card_(main_screen_o, listed_goods);
+    //添加键盘到主屏幕
+    open_chat_screen_cn_kb_pair =  tools_create_pinyin_ime(main_screen_o, 500, 200);   //屏幕上添加键盘,默认隐藏
+    // lv_obj_add_event_cb(main_screen_o, oc_hidden_kb_cb, LV_EVENT_CLICKED, NULL); //添加点击屏幕隐藏键盘事件
     
     //添加openchat主界面到屏幕
     load_open_chat_main_interface(main_screen_o);
@@ -123,8 +126,6 @@ void main_screen(){
    // //添加结算按钮相关功能
    // settlement(main_screen_o, shopping_cart_added_list);
    //
-   open_chat_screen_cn_kb_pair =  tools_create_pinyin_ime(main_screen_o, 500, 200);   //屏幕上添加键盘,默认隐藏
-   lv_obj_add_event_cb(main_screen_o, oc_hidden_kb_cb, LV_EVENT_CLICKED, NULL); //添加点击屏幕隐藏键盘事件
    //加载主界面删除旧窗口（login）使用动画转场
    lv_scr_load_anim(main_screen_o, LV_SCR_LOAD_ANIM_MOVE_LEFT, 500, 0, true);
 }
@@ -313,6 +314,8 @@ void load_open_chat_main_interface(lv_obj_t * main_screen_o){   //传入主屏�
     open_chat_ol_list = lv_list_create(open_chat_ol_list_o); //创建在线客户端列表对象
     lv_obj_set_size(open_chat_ol_list, ol_list_w, ol_list_h);//设置尺寸
     lv_obj_align_to(open_chat_ol_list, open_chat_ol_list_o, LV_ALIGN_CENTER, 0, 0);  //对齐
+    //添加点击列表框隐藏键盘事件回调
+    lv_add_event_cb(open_chat_ol_list, oc_hidden_kb_cb, LV_EVENT_CLICKED, NULL); //添加点击列表框隐藏键盘
 
     //创建openchat主聊天界面容器
     lv_obj_t * open_chat_main_interface_o = lv_obj_create(main_screen_o);
@@ -320,6 +323,8 @@ void load_open_chat_main_interface(lv_obj_t * main_screen_o){   //传入主屏�
     lv_obj_align_to(open_chat_main_interface_o, main_screen_o, LV_ALIGN_TOP_RIGHT, 0, 0);  //对齐
     lv_coord_t main_interface_h = lv_obj_get_height(open_chat_main_interface_o);//获取主聊天界面高度
     lv_coord_t main_interface_w = lv_obj_get_width(open_chat_main_interface_o);//获取主聊天界面宽度
+    //添加点击主聊天界面隐藏键盘事件回调
+    lv_add_event_cb(open_chat_main_interface_o, oc_hidden_kb_cb, LV_EVENT_CLICKED, NULL); //添加点击主聊天界面隐藏键盘
 
     //创建输入框和下方按钮放置容器
     lv_obj_t * open_chat_input_interface_o = lv_obj_create(main_screen_o);

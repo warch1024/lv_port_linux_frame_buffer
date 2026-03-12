@@ -68,8 +68,11 @@ void tools_hidden_pinyin_kb(lv_obj_t * kb, lv_obj_t * cp){
 }
 void tools_show_pinyin_kb(lv_obj_t * kb, lv_obj_t * cp){
     if(kb && cp){
-        lv_obj_clear_flag(kb, LV_OBJ_FLAG_HIDDEN);//隐藏键盘
-        lv_obj_clear_flag(cp, LV_OBJ_FLAG_HIDDEN);//隐藏键盘
+        lv_obj_clear_flag(kb, LV_OBJ_FLAG_HIDDEN);//清除隐藏键盘
+        lv_obj_clear_flag(cp, LV_OBJ_FLAG_HIDDEN);//清除隐藏候选栏
+        //将键盘和候选栏置于顶层
+        lv_obj_move_foreground(kb);
+        lv_obj_move_foreground(cp);
     }
 }
 
