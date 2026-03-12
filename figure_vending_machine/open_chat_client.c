@@ -205,25 +205,28 @@ void print_func_list(){
 void client_interaction_handler(int *oc_client_sock_p, struct sockaddr_in * oc_client_addr, struct clientmsg *online_clients_ll){
 	int ret;
 	char select_buf[10];
-	clear_socket_buffer(*oc_client_sock_p);	//先清空缓存
-	print_func_list();	//打印菜单	1获取所有在线client，2单独和某client聊天，3发文件 ，4发表情包（图片）
 	
-	bzero(select_buf,sizeof(select_buf));
-	fgets(select_buf, sizeof(select_buf), stdin);	//获取一行输入
-	select_buf[strcspn(select_buf, "\n")] = '\0';  // 去除末尾的换行符
-	//debug
-	printf("debug——4个功能选择完成\n");
-	if(strcmp(select_buf, "1")== 0){	//获取在线客户端
-		send_get_all_online_clients_cmd(oc_client_sock_p, oc_client_addr);
-	}
-	else if(strcmp(select_buf, "2")== 0){	//单独聊天
-		// c2c_chat_send_handler(oc_client_sock_p, online_clients_ll);
-	}
-	else if(strcmp(select_buf, "3")== 0){	//发文件
-		// send_file_handler(oc_client_sock_p, online_clients_ll);	//客户端给客户端发送文件
-	}
-	else if(strcmp(select_buf, "4")== 0){	//发表情包
-
+	while(1){
+		clear_socket_buffer(*oc_client_sock_p);	//先清空缓存
+		print_func_list();	//打印菜单	1获取所有在线client，2单独和某client聊天，3发文件 ，4发表情包（图片）
+		
+		bzero(select_buf,sizeof(select_buf));
+		fgets(select_buf, sizeof(select_buf), stdin);	//获取一行输入
+		select_buf[strcspn(select_buf, "\n")] = '\0';  // 去除末尾的换行符
+		//debug
+		printf("debug——4个功能选择完成\n");
+		if(strcmp(select_buf, "1")== 0){	//获取在线客户端
+			send_get_all_online_clients_cmd(oc_client_sock_p, oc_client_addr);
+		}
+		else if(strcmp(select_buf, "2")== 0){	//单独聊天
+			// c2c_chat_send_handler(oc_client_sock_p, online_clients_ll);
+		}
+		else if(strcmp(select_buf, "3")== 0){	//发文件
+			// send_file_handler(oc_client_sock_p, online_clients_ll);	//客户端给客户端发送文件
+		}
+		else if(strcmp(select_buf, "4")== 0){	//发表情包
+	
+		}
 	}
 
 }
@@ -307,6 +310,7 @@ void *recv_servermsg(void *arg)
 	int ret;
 	int client_sock = *(int *)arg;	//传入本机的sock
 	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);	//设置立即取消此线程
+	
 	while(1){//debug
 		printf("debug: 重置接收缓存\n");
 		//接收服务器发送过来的信息
@@ -466,10 +470,8 @@ void* init_open_chat_client(void * arg){
 	pthread_create(&oc_recv_thread_id, &oc_recv_thread_attr, recv_servermsg, &oc_client_sock);
 	sleep(1);//等待接收线程启动
 	send_get_all_online_clients_cmd(&oc_client_sock, &oc_client_addr);//同步所有在线客户端信息
-	while(1)	//发送信息
-	{
-		client_interaction_handler(&oc_client_sock, &oc_client_addr, oc_online_client_ll);	//打开交互界面
-	}
+	//运行主功能
+	client_interaction_handler(&oc_client_sock, &oc_client_addr, oc_online_client_ll);	//打开交互界面
 	//挂机
 	close(oc_client_sock);
 	return 0;

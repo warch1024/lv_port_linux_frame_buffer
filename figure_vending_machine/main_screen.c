@@ -14,6 +14,7 @@ static cn_kb_cp_ros open_chat_screen_cn_kb_pair = {.cn_kb = NULL, .cn_kb_cp = NU
 void main_screen_init(){
 
     //加载主屏幕的功能
+    
     main_screen();
 }
 void oc_hidden_kb_cb(lv_event_t * e){   //隐藏键盘回调
@@ -100,7 +101,9 @@ void main_screen(){
     // // 添加商品卡片到主屏幕
     // add_page_4_card_(main_screen_o, listed_goods);
     //添加键盘到主屏幕
-    open_chat_screen_cn_kb_pair =  tools_create_pinyin_ime(main_screen_o, 500, 200);   //屏幕上添加键盘,默认隐藏
+    
+    //debug
+    //debug 显示键盘
     // lv_obj_add_event_cb(main_screen_o, oc_hidden_kb_cb, LV_EVENT_CLICKED, NULL); //添加点击屏幕隐藏键盘事件
     
     //添加openchat主界面到屏幕
@@ -126,6 +129,9 @@ void main_screen(){
    // //添加结算按钮相关功能
    // settlement(main_screen_o, shopping_cart_added_list);
    //
+   open_chat_screen_cn_kb_pair =  tools_create_pinyin_ime(main_screen_o, 500, 200);   //屏幕上添加键盘,默认隐藏
+//    tools_show_pinyin_kb(open_chat_screen_cn_kb_pair.cn_kb, open_chat_screen_cn_kb_pair.cn_kb_cp);
+   printf("debug: 键盘加载完成%p\n", open_chat_screen_cn_kb_pair.cn_kb);
    //加载主界面删除旧窗口（login）使用动画转场
    lv_scr_load_anim(main_screen_o, LV_SCR_LOAD_ANIM_MOVE_LEFT, 500, 0, true);
 }
@@ -315,7 +321,7 @@ void load_open_chat_main_interface(lv_obj_t * main_screen_o){   //传入主屏�
     lv_obj_set_size(open_chat_ol_list, ol_list_w, ol_list_h);//设置尺寸
     lv_obj_align_to(open_chat_ol_list, open_chat_ol_list_o, LV_ALIGN_CENTER, 0, 0);  //对齐
     //添加点击列表框隐藏键盘事件回调
-    lv_add_event_cb(open_chat_ol_list, oc_hidden_kb_cb, LV_EVENT_CLICKED, NULL); //添加点击列表框隐藏键盘
+    lv_obj_add_event_cb(open_chat_ol_list, oc_hidden_kb_cb, LV_EVENT_CLICKED, NULL); //添加点击列表框隐藏键盘
 
     //创建openchat主聊天界面容器
     lv_obj_t * open_chat_main_interface_o = lv_obj_create(main_screen_o);
@@ -324,7 +330,7 @@ void load_open_chat_main_interface(lv_obj_t * main_screen_o){   //传入主屏�
     lv_coord_t main_interface_h = lv_obj_get_height(open_chat_main_interface_o);//获取主聊天界面高度
     lv_coord_t main_interface_w = lv_obj_get_width(open_chat_main_interface_o);//获取主聊天界面宽度
     //添加点击主聊天界面隐藏键盘事件回调
-    lv_add_event_cb(open_chat_main_interface_o, oc_hidden_kb_cb, LV_EVENT_CLICKED, NULL); //添加点击主聊天界面隐藏键盘
+    lv_obj_add_event_cb(open_chat_main_interface_o, oc_hidden_kb_cb, LV_EVENT_CLICKED, NULL); //添加点击主聊天界面隐藏键盘
 
     //创建输入框和下方按钮放置容器
     lv_obj_t * open_chat_input_interface_o = lv_obj_create(main_screen_o);
@@ -338,6 +344,9 @@ void load_open_chat_main_interface(lv_obj_t * main_screen_o){   //传入主屏�
     //在输入框容器里面创建输入框,添加中文支持
     lv_obj_t * open_chat_input_ta = tools_create_common_ta(open_chat_input_interface_o, input_interface_w, input_interface_h, "请输入消息");
     lv_obj_align_to(open_chat_input_ta, open_chat_input_interface_o, LV_ALIGN_TOP_MID, 0, 0);  //对齐
+    //添加点击输入框显示键盘事件回调
+    //debug 添加输入框和键盘关联
+    tools_ta_kb_associate(open_chat_input_ta, open_chat_screen_cn_kb_pair.cn_kb);
     lv_obj_add_event_cb(open_chat_input_ta, oc_ta_kb_associate_cb, LV_EVENT_FOCUSED, NULL); //添加点击输入框显示键盘事件
     
     //创建发送表情包，文件，发送消息按钮对象

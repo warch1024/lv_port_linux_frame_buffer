@@ -9,6 +9,7 @@
 #include "figure_vending_machine/goods_mangm_con.h"
 
 #include"figure_vending_machine/screen_objs.h"  //标准库
+
 /*初始化登陆屏幕前置组件
 */
 void login_screen_init();

@@ -15,7 +15,7 @@ static lv_style_t * login_bg_style = NULL,  //登录屏幕背景设置样式
     * login_window_opa_style = NULL;     //登录窗口透明度设置样式
 
 //键盘和中文支持
-static cn_kb_cp_ros login_cn_kb_pair = {.cn_kb = NULL, .cn_kb_cp = NULL};
+cn_kb_cp_ros login_cn_kb_pair = {.cn_kb = NULL, .cn_kb_cp = NULL};
 //默认主题图片路径
 static char * def_login_theme_path = "S:/IOT/projects/openChat/resources/login_bg2.jpg"; 
 
