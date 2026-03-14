@@ -1,10 +1,10 @@
 
-#include"figure_vending_machine/figure_vending_machine.h"
+#include"openChat/openChat.h"
 //用于通信的线程对象
 static pthread_t client_thread_id;
 
 
-int figure_vending_machine(){
+int open_chat(){
     //初始化功能
     open_chat_init();
     login_screen_init(); //转到登陆屏幕

@@ -1,7 +1,7 @@
 #ifndef __OPEN_CHAT_TOOLS_H__
 #define __OPEN_CHAT_TOOLS_H__
 
-#include"figure_vending_machine/screen_objs.h"  //标准库头文件
+#include"openChat/screen_objs.h"  //标准库头文件
 
 struct clientmsg
 {
@@ -26,6 +26,11 @@ void print_all_client(struct clientmsg * myhead);
 // void *send_msgto_client(void *arg);
 int get_client_count(struct clientmsg * myhead);
 void empty_list(struct clientmsg * head);
-
+/**
+ * 从文件全路径中提取文件名
+ * @param path 文件全路径
+ * @return 文件名（不包含路径部分）
+ */
+const char* get_filename_from_path(const char* path);
 
 #endif

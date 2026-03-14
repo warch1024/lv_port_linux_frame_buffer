@@ -134,3 +134,26 @@ void empty_list(struct clientmsg * head){
 		head->next = NULL;
 	}
 }
+/**
+ * 从文件全路径中提取文件名
+ * @param path 文件全路径
+ * @return 文件名（不包含路径部分）
+ */
+const char* get_filename_from_path(const char* path) {
+    if (path == NULL) {
+        return NULL;
+    }
+
+    const char* filename = path;
+    const char* temp = path;
+
+    // 查找最后一个 '/' 或 '\'
+    while (*temp != '\0') {
+        if (*temp == '/' || *temp == '\\') {
+            filename = temp + 1;
+        }
+        temp++;
+    }
+
+    return filename;
+}

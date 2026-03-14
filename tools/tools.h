@@ -4,7 +4,7 @@
 // #include "figure_vending_machine/main_screen.h"
 // #include "figure_vending_machine/user_info_mangm.h"
 
-#include"figure_vending_machine/screen_objs.h"  //标准库
+#include"openChat/screen_objs.h"  //标准库
 
 //extern lv_obj_t * tools_cn_kb, *tools_cand_pannel;
 

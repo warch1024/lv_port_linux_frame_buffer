@@ -1,4 +1,4 @@
-#include "figure_vending_machine/login_screen.h"    
+#include "openChat/login_screen.h"    
 
 
 #define USER_RECORD_FILE "/IOT/projects/openChat/user_info_recorder.txt"
@@ -322,10 +322,6 @@ void save_logup_info(){ //保存用户信息
 void admin_management(){    //管理员管理程序
     // 在主菜单或其他适当位置
 
-        //初始化全局listed_list
-    init_def_goods_to_list();
-    //初始化已加购列表
-    init_shopping_cart_added_list();
     //创建标签
     lv_obj_t *main_screen_admin_lb=lv_label_create(main_screen_o);
     lv_obj_set_align(main_screen_admin_lb,LV_ALIGN_TOP_RIGHT);
@@ -333,9 +329,6 @@ void admin_management(){    //管理员管理程序
     lv_label_set_text(main_screen_admin_lb,"管理员");
     lv_obj_add_style(main_screen_admin_lb, def_text_style, 1);
     
-    // lv_obj_invalidate(login_screen_o); //刷新
-    // lv_obj_invalidate(main_screen_admin_lb); //刷新
-    show_goods_management_menu();   //显示管理面板
 
     main_screen_init();  //重新初始化
 }

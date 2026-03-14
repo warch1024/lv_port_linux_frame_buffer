@@ -1,4 +1,4 @@
-#include "figure_vending_machine/user_info_mangm.h"
+#include "openChat/user_info_mangm.h"
 
 tools_dll_t * user_info_list = NULL;  //全局保存用户信息变量
 

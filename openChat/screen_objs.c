@@ -1,4 +1,4 @@
-#include"figure_vending_machine/screen_objs.h"  //标准库
+#include"openChat/screen_objs.h"  //标准库
 
 //管理所有屏幕对象
 lv_obj_t                //管理所有屏幕

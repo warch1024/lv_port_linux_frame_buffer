@@ -16,15 +16,13 @@ MAINSRC = \
 	./main.c \
 	tools/tools.c \
 	tools/open_chat_tools.c \
-	figure_vending_machine/figure_vending_machine.c \
-	figure_vending_machine/login_screen.c \
-	figure_vending_machine/main_screen.c \
-	figure_vending_machine/screen_objs.c \
-	figure_vending_machine/user_info_mangm.c \
-	figure_vending_machine/checkout.c \
-	figure_vending_machine/goods_mangm.c\
-	figure_vending_machine/goods_mangm_con.c\
-	figure_vending_machine/open_chat_client.c\
+	openChat/openChat.c \
+	openChat/login_screen.c \
+	openChat/main_screen.c \
+	openChat/screen_objs.c \
+	openChat/user_info_mangm.c \
+	openChat/open_chat_client.c\
+	openChat/chat_func.c\
 
 
 

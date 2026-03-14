@@ -28,14 +28,25 @@ static lv_obj_t * add_pinyin_plugin(lv_obj_t * kb, lv_obj_t * parent_obj, int kb
       
     //static lv_style_t pinyin_plugin_font_style;   //拼音输入法候选字的style
     //tools_create_font_style(&pinyin_plugin_font_style,"/fonts/MSYH.TTC", 20);
-    
+    if(!parent_obj && !kb){
+        printf("debug: 父对象为空，或键盘为空，无法创建拼音输入法插件\n");
+        return NULL;
+    }
     lv_obj_t * pinyin_ime = lv_ime_pinyin_create(parent_obj); //创建拼音输入法插件
+    if(!pinyin_ime){
+        printf("debug: 创建拼音输入法插件失败\n");
+        return NULL;
+    }
+    
     lv_obj_set_size(pinyin_ime, 1, 1);  //设置大小避免遮蔽
     lv_obj_set_pos(pinyin_ime, 0, 0);   //设置位置避免遮蔽
     lv_obj_add_style(pinyin_ime, def_text_style, 0); //输入法候选字正常显示中文
     lv_ime_pinyin_set_mode(pinyin_ime, LV_IME_PINYIN_MODE_K26); //设置默认模式
     lv_obj_t * cand_pannel = lv_ime_pinyin_get_cand_panel(pinyin_ime);   //获取拼音候选栏对象
-
+    if(!cand_pannel){
+        printf("debug: 获取拼音候选栏对象失败\n");
+        return NULL;
+    }
     lv_obj_set_width(cand_pannel, kb_width); // 绑定后续按字宽度到键盘
     lv_ime_pinyin_set_keyboard(pinyin_ime, kb); //将拼音插件绑定到键盘
     /* 如果使用自定义字典
@@ -43,9 +54,15 @@ static lv_obj_t * add_pinyin_plugin(lv_obj_t * kb, lv_obj_t * parent_obj, int kb
         使用lv_ime_pinyin_set_dict()设置自定义字典
         使用lv_ime_pinyin_set_mode()设置输入模式
     */
+   lv_obj_move_foreground(pinyin_ime); //将拼音输入法插件置于顶层
+   lv_obj_move_foreground(cand_pannel); //将拼音候选栏置于顶层
     return cand_pannel;   // 返回候选栏
 }
 cn_kb_cp_ros tools_create_pinyin_ime(lv_obj_t * parent_obj, int weight, int height){ //将键盘放在obj上
+    if(!parent_obj){
+        printf("debug: 父对象为空，无法创建拼音输入法\n");
+        return (cn_kb_cp_ros){NULL, NULL};
+    }
     lv_obj_t * cn_kb = lv_keyboard_create(parent_obj);                                // 屏幕上添加键盘
     lv_obj_set_size(cn_kb, weight, height);
     lv_obj_set_pos(cn_kb, 0, 0); // 位置放在0,0否则偏移很大
@@ -55,22 +72,30 @@ cn_kb_cp_ros tools_create_pinyin_ime(lv_obj_t * parent_obj, int weight, int heig
     if(cn_kb && cn_kb_cp) {
 
         tools_hidden_pinyin_kb(cn_kb, cn_kb_cp);
+        
+        cn_kb_cp_ros pair = {.cn_kb = cn_kb, .cn_kb_cp = cn_kb_cp};
+        return pair;
     }
-    cn_kb_cp_ros pair = {.cn_kb = cn_kb, .cn_kb_cp = cn_kb_cp};
-    return pair;
+    else{
+        printf("debug: 创建拼音输入法失败，键盘%p, 候选栏%p\n", cn_kb, cn_kb_cp);
+        return (cn_kb_cp_ros){NULL, NULL};
+    }
 }
 
 void tools_hidden_pinyin_kb(lv_obj_t * kb, lv_obj_t * cp){
     if(kb && cp){
         lv_obj_add_flag(kb, LV_OBJ_FLAG_HIDDEN);//隐藏键盘
-        lv_obj_add_flag(cp, LV_OBJ_FLAG_HIDDEN);//隐藏键盘
+        lv_obj_add_flag(cp, LV_OBJ_FLAG_HIDDEN);//隐藏候选栏
+        printf("debug: 隐藏拼音键盘键盘%p, 候选栏%p\n", kb, cp);
     }
 }
 void tools_show_pinyin_kb(lv_obj_t * kb, lv_obj_t * cp){
     if(kb && cp){
+        //debug
         lv_obj_clear_flag(kb, LV_OBJ_FLAG_HIDDEN);//清除隐藏键盘
         lv_obj_clear_flag(cp, LV_OBJ_FLAG_HIDDEN);//清除隐藏候选栏
-        //将键盘和候选栏置于顶层
+        printf("debug: 显示拼音键盘键盘%p, 候选栏%p\n", kb, cp);
+        // //将键盘和候选栏置于顶层
         lv_obj_move_foreground(kb);
         lv_obj_move_foreground(cp);
     }

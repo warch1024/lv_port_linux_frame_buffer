@@ -56,7 +56,7 @@ typedef struct Lv_obj_pn{       //存储lv对象
 
 /*贩卖机主控制程序
 */
-int figure_vending_machine();
+int open_chat();
 
 
 #endif

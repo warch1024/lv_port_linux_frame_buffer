@@ -79,7 +79,7 @@ int main(int argc, char ** argv)
     //printf("-1 ");
     //login_screen();
 
-    figure_vending_machine();
+    open_chat();
     // make_player();
 
 

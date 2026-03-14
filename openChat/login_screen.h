@@ -1,14 +1,12 @@
 #ifndef _LOGIN_SCREEN_H
 #define _LOGIN_SCREEN_H 
 
-#include "figure_vending_machine/main_screen.h"
-#include "figure_vending_machine/user_info_mangm.h"
+#include "openChat/main_screen.h"
+#include "openChat/user_info_mangm.h"
 #include "tools/tools.h"
 
 
-#include "figure_vending_machine/goods_mangm_con.h"
-
-#include"figure_vending_machine/screen_objs.h"  //标准库
+#include"openChat/screen_objs.h"  //标准库
 
 /*初始化登陆屏幕前置组件
 */

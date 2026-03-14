@@ -4,7 +4,7 @@
 // #include "figure_vending_machine/main_screen.h"
 #include "tools/tools.h"
 
-#include"figure_vending_machine/screen_objs.h"  //标准库
+#include"openChat/screen_objs.h"  //标准库
 
 // #include<stdio.h>
 
